@@ -33,7 +33,7 @@ public class ViewManager {
         if(newScene == null && scene != null)
         {
             newScene = scene;
-            scenes.put("MainMenu", scene);
+            scenes.put(name, scene);
         }
         else
             System.out.println("error not found the scene and provided scene was null");
