@@ -28,12 +28,13 @@ public class SettingsScreen implements ViewScene{
 
     private void setUpButtons(Group root) {
         VBox cbHolder = new VBox(10);
-        CheckBox fullscreenCB = new CheckBox("Enable Fullscreen");
+        CheckBox fullscreenCB = new CheckBox("Włącz tryb pełnoekranowy");
+        CheckBox autoSave = new CheckBox("Włącz automatyczne zapisywanie");
         cbHolder.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(cbHolder.widthProperty()).divide(2));
-        cbHolder.layoutYProperty().bind(Main.manager.mainStage.heightProperty().subtract(cbHolder.heightProperty()).divide(1.2));
+        cbHolder.layoutYProperty().bind(Main.manager.mainStage.heightProperty().subtract(cbHolder.heightProperty()).divide(3));
         cbHolder.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
 
-        cbHolder.getChildren().add(fullscreenCB);
+        cbHolder.getChildren().addAll(fullscreenCB, autoSave);
 
         javafx.scene.control.Button backButton = new Button("POWRÓT DO MENU");
         backButton.layoutXProperty().bind(cbHolder.layoutXProperty());

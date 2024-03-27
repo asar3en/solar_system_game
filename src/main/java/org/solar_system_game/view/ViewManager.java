@@ -12,8 +12,10 @@ public class ViewManager {
 
     public ViewManager(Stage mainStage) {
         this.mainStage = mainStage;
-        mainStage.setMinHeight(720);
-        mainStage.setMinWidth(1080);
+        mainStage.setMinHeight(900);
+        mainStage.setMinWidth(1600);
+        mainStage.setHeight(900);
+        mainStage.setWidth(1600);
         mainStage.show();
     }
 
