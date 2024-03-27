@@ -44,6 +44,16 @@ public class MainGameScreen implements ViewScene{
             }
         });
 
+        settings.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(!Main.manager.SwitchScene("Options", null)) {
+                    SettingsScreen settingsScreen = new SettingsScreen();
+                    Main.manager.SwitchScene("Options", settingsScreen.GetJavafxScene());
+                }
+            }
+        });
+
         loadGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
