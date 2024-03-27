@@ -34,18 +34,21 @@ public class ViewManager {
 
     // It searches for the name provided in already existing scenes, if not found it tries to add provided scene
     //if provided scene is null and matching scene was not found throws exception
-    public void SwitchScene(String name, Scene scene)  {
+    public boolean SwitchScene(String name, Scene scene)  {
         Scene newScene = FindScene(name);
         if(newScene == null && scene != null)
         {
             newScene = scene;
             scenes.put(name, scene);
         }
-        else if(newScene == null)
+        else if(newScene == null) {
             System.out.println("error not found the scene and provided scene was null");
+            return false;
+        }
 
         currentScene = newScene;
         mainStage.setScene(newScene);
         mainStage.show();
+        return true;
     }
 }
