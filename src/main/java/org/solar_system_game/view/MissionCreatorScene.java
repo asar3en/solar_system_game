@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import org.solar_system_game.Main;
 
+
 public class MissionCreatorScene implements ViewScene{
 
     Scene javaFxScene;
@@ -38,7 +39,8 @@ public class MissionCreatorScene implements ViewScene{
         exitNoSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Main.manager.SwitchScene("MainMenu", null);
+                var MGS = new MainGameScreen();
+                Main.manager.SwitchScene("MGS", null);
                 //później będzie kod resetujący wprowadzone dane w kreatorze
             }
         });
@@ -46,15 +48,16 @@ public class MissionCreatorScene implements ViewScene{
         exitSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Main.manager.SwitchScene("MainGame", null);
+                Main.manager.SwitchScene("MGS", null);
                 //później będzie kod zapisujący wprowadzone parametry
-                }
+            }
 
         });
 
         addPlanet.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+
                 Main.manager.SwitchScene("MainGame", null);
             }
         });
@@ -77,7 +80,6 @@ public class MissionCreatorScene implements ViewScene{
 
         creatorBar.setTranslateX(0);
         creatorBar.setTranslateY(0);
-
     }
 
 }
