@@ -121,6 +121,12 @@ public class MainGameScreen implements ViewScene{
                     case KeyCode.F11:
                         Main.manager.mainStage.setFullScreen(true);
                         break;
+                    case KeyCode.F9:
+                        var MissCreSce = new MissionCreatorScene();
+                        Main.manager.SwitchScene("MissCreSce", MissCreSce.GetJavafxScene());
+                    case KeyCode.F8:
+                        var PlanetAddScene = new PlanetAdditionScene();
+                        Main.manager.SwitchScene("PlanetAddScene", PlanetAddScene.GetJavafxScene());
                     case KeyCode.ESCAPE:
                         // pause the game
                     default: break;
