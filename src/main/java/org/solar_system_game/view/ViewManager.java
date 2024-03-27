@@ -41,7 +41,7 @@ public class ViewManager {
             newScene = scene;
             scenes.put(name, scene);
         }
-        else
+        else if(newScene == null)
             System.out.println("error not found the scene and provided scene was null");
 
         currentScene = newScene;
