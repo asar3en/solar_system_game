@@ -7,14 +7,20 @@ import java.util.HashMap;
 
 public class ViewManager {
     private javafx.scene.Scene currentScene;
-    private Stage mainStage;
+    public Stage mainStage;
     private HashMap<String, Scene> scenes = new HashMap<>();
 
     public ViewManager(Stage mainStage) {
         this.mainStage = mainStage;
-        var mainMenu = new MainMenuScene();
-        SwitchScene("MainMenu", mainMenu.GetJavafxScene());
+        mainStage.setMinHeight(720);
+        mainStage.setMinWidth(1080);
+        mainStage.show();
     }
+
+    private void SetupStageProperties() {
+        mainStage.setFullScreen(true);
+    }
+
     public javafx.scene.Scene GetCurrentScene() {
         return currentScene;
     }
