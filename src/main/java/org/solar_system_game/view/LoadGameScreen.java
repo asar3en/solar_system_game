@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import org.solar_system_game.Main;
 
 public class LoadGameScreen implements ViewScene{
@@ -20,7 +21,7 @@ public class LoadGameScreen implements ViewScene{
         Group root = new Group();
         setUpButtons(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight());
+        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight(), Color.BLACK);
         setKeyShortcuts();
     }
 

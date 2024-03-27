@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.solar_system_game.Main;
 
@@ -23,7 +24,7 @@ public class MainGameScreen implements ViewScene{
         setUpButtons(root);
         setUpGameInfo(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight());
+        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight(), Color.BLACK);
         setKeyShortcuts();
     }
 
@@ -87,6 +88,7 @@ public class MainGameScreen implements ViewScene{
     private void setUpGameInfo(Group root) {
         Label target = new Label("Cel: Tu Jest Cel");
         target.setFont(Font.font("Arial", 20));
+        target.setTextFill(Color.WHITE);
         target.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
         target.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(target.widthProperty().add(15)));
 
@@ -94,6 +96,7 @@ public class MainGameScreen implements ViewScene{
         Label time = new Label("Czas: \n Tu się wyświetla czas");
         time.prefWidthProperty().bind(target.prefWidthProperty());
         time.setFont(Font.font("Arial", 20));
+        time.setTextFill(Color.WHITE);
         time.layoutXProperty().bind(target.layoutXProperty());
         time.layoutYProperty().bind(target.layoutYProperty().add(target.heightProperty().add(10)));
 
@@ -101,6 +104,7 @@ public class MainGameScreen implements ViewScene{
         fuel.prefWidthProperty().bind(target.prefWidthProperty());
         fuel.setFont(Font.font("Arial", 20));
         fuel.layoutXProperty().bind(target.layoutXProperty());
+        fuel.setTextFill(Color.WHITE);
         fuel.layoutYProperty().bind(time.layoutYProperty().add(time.heightProperty().add(10)));
 
         root.getChildren().addAll(target,time,fuel);

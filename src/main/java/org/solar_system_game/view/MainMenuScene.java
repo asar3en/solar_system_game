@@ -7,8 +7,12 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import org.solar_system_game.Main;
 
@@ -18,17 +22,26 @@ public class MainMenuScene implements ViewScene {
 
     public MainMenuScene() {
         Group root = new Group();
+        setBackground(root);
         setUpTitle(root);
         setUpButtons(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight());
-
+        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight(), Color.BLACK);
         setKeyShortcuts();
+    }
+
+    private void setBackground(Group root) {
+        Rectangle bg = new Rectangle();
+        bg.widthProperty().bind(Main.manager.mainStage.widthProperty());
+        bg.heightProperty().bind(Main.manager.mainStage.heightProperty());
+        bg.setFill(new ImagePattern(new Image("copyrightfreestars.png")));
+        root.getChildren().add(bg);
     }
 
     private void setUpTitle(Group root) {
         Label title = new Label("Solar System Game!");
         title.setFont(Font.font("Arial", 50));
+        title.setTextFill(Color.WHITE);
         title.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(title.widthProperty()).divide(2));
         title.layoutYProperty().bind(Main.manager.mainStage.heightProperty().subtract(title.heightProperty()).divide(3));
 
