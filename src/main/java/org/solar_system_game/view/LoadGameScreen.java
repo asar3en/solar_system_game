@@ -45,9 +45,7 @@ public class LoadGameScreen implements ViewScene{
             }
         });
 
-        root.getChildren().add(loadButton);
-        root.getChildren().add(deleteButton);
-        root.getChildren().add(backButton);
+        root.getChildren().addAll(loadButton,deleteButton,backButton);
     }
 
     private void setKeyShortcuts() {

@@ -75,11 +75,7 @@ public class MainMenuScene implements ViewScene {
         });
 
 
-
-        root.getChildren().add(newGameButton);
-        root.getChildren().add(loadGameButton);
-        root.getChildren().add(optionsButton);
-        root.getChildren().add(exitGameButton);
+        root.getChildren().addAll(newGameButton, loadGameButton, optionsButton, exitGameButton);
     }
 
     private void setKeyShortcuts() {
@@ -92,6 +88,10 @@ public class MainMenuScene implements ViewScene {
                         break;
                     case KeyCode.F11:
                         Main.manager.mainStage.setFullScreen(true);
+                        break;
+                    case KeyCode.F10:
+                        var mgS = new MainGameScreen();
+                        Main.manager.SwitchScene("MGS", mgS.GetJavafxScene());
                         break;
                     default: break;
                 }
