@@ -12,15 +12,17 @@ import org.solar_system_game.Main;
 public class MissionCreatorScene implements ViewScene{
 
     Scene javaFxScene;
+    ViewManager manager;
     public Scene GetJavafxScene() {
         return javaFxScene;
     }
 
-    public MissionCreatorScene() {
+    public MissionCreatorScene(ViewManager manager) {
+        this.manager = manager;
         Group root = new Group();
         setUpButtons(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight());
+        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight());
     }
 
     private void setUpButtons(Group root) {
@@ -39,8 +41,8 @@ public class MissionCreatorScene implements ViewScene{
         exitNoSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                var MGS = new MainGameScreen();
-                Main.manager.SwitchScene("MGS", null);
+                var MGS = new MainGameScene(manager);
+                manager.SwitchScene("MGS", null);
                 //później będzie kod resetujący wprowadzone dane w kreatorze
             }
         });
@@ -48,7 +50,7 @@ public class MissionCreatorScene implements ViewScene{
         exitSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Main.manager.SwitchScene("MGS", null);
+                manager.SwitchScene("MGS", null);
                 //później będzie kod zapisujący wprowadzone parametry
             }
 
@@ -58,7 +60,7 @@ public class MissionCreatorScene implements ViewScene{
             @Override
             public void handle(ActionEvent actionEvent) {
 
-                Main.manager.SwitchScene("MainGame", null);
+                manager.SwitchScene("MainGame", null);
             }
         });
 

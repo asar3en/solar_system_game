@@ -6,15 +6,14 @@ import org.solar_system_game.view.MainMenuScene;
 import org.solar_system_game.view.ViewManager;
 
 public class Main extends  Application {
-    static public ViewManager manager;
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage mainStage) {
-        manager = new ViewManager(mainStage);
-        var mainMenu = new MainMenuScene();
+        var manager = new ViewManager(mainStage);
+        var mainMenu = new MainMenuScene(manager);
         manager.SwitchScene("MainMenu", mainMenu.GetJavafxScene());
     }
 }

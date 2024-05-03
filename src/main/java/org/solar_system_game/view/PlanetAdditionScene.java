@@ -16,15 +16,17 @@ import javax.swing.*;
 
 public class PlanetAdditionScene implements ViewScene{
     Scene javaFxScene;
+    ViewManager manager;
     public Scene GetJavafxScene() {
         return javaFxScene;
     }
 
-    public PlanetAdditionScene() {
+    public PlanetAdditionScene(ViewManager manager) {
+        this.manager = manager;
         Group root = new Group();
         //setUpButtons(root);
         setUpElements(root);
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight());
+        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight());
     }
 
     private void setUpElements(Group root){
@@ -56,7 +58,7 @@ public class PlanetAdditionScene implements ViewScene{
         planetFinishSetup.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Main.manager.SwitchScene("MissionCreator", null);
+                manager.SwitchScene("MissionCreator", null);
             }
         });
 

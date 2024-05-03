@@ -12,19 +12,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.solar_system_game.Main;
 
-public class MainGameScreen implements ViewScene{
+public class MainGameScene implements ViewScene{
     Scene javaFxScene;
+    ViewManager manager;
     @Override
     public Scene GetJavafxScene() {
         return javaFxScene;
     }
 
-    public MainGameScreen() {
+    public MainGameScene(ViewManager manager) {
+        this.manager = manager;
         Group root = new Group();
         setUpButtons(root);
         setUpGameInfo(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight(), Color.BLACK);
+        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight(), Color.BLACK);
         setKeyShortcuts();
     }
 
@@ -41,16 +43,16 @@ public class MainGameScreen implements ViewScene{
         returnToMainMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Main.manager.SwitchScene("MainMenu", null);
+                manager.SwitchScene("MainMenu", null);
             }
         });
 
         settings.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(!Main.manager.SwitchScene("Settings", null)) {
-                    SettingsScreen settingsScreen = new SettingsScreen();
-                    Main.manager.SwitchScene("Settings", settingsScreen.GetJavafxScene());
+                if(!manager.SwitchScene("Settings", null)) {
+                    SettingsScene settingsScene = new SettingsScene(manager);
+                    manager.SwitchScene("Settings", settingsScene.GetJavafxScene());
                 }
             }
         });
@@ -58,9 +60,9 @@ public class MainGameScreen implements ViewScene{
         loadGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(!Main.manager.SwitchScene("LoadGame", null)) {
-                    LoadGameScreen loadGameScreen = new LoadGameScreen();
-                    Main.manager.SwitchScene("LoadGame", loadGameScreen.GetJavafxScene());
+                if(!manager.SwitchScene("LoadGame", null)) {
+                    LoadGameScene loadGameScene = new LoadGameScene(manager);
+                    manager.SwitchScene("LoadGame", loadGameScene.GetJavafxScene());
                 }
             }
         });
@@ -79,8 +81,8 @@ public class MainGameScreen implements ViewScene{
         bar.setTranslateY(0);
 
         Button startPause = new Button("S/P");
-        startPause.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(startPause.widthProperty()).subtract(50));
-        startPause.layoutYProperty().bind(Main.manager.mainStage.heightProperty().subtract(startPause.heightProperty()).subtract(50));
+        startPause.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(startPause.widthProperty()).subtract(50));
+        startPause.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(startPause.heightProperty()).subtract(50));
 
         root.getChildren().addAll(bar, startPause);
     }
@@ -89,8 +91,8 @@ public class MainGameScreen implements ViewScene{
         Label target = new Label("Cel: Tu Jest Cel");
         target.setFont(Font.font("Arial", 20));
         target.setTextFill(Color.WHITE);
-        target.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
-        target.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(target.widthProperty().add(15)));
+        target.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
+        target.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(target.widthProperty().add(15)));
 
 
         Label time = new Label("Czas: \n Tu się wyświetla czas");
@@ -116,17 +118,17 @@ public class MainGameScreen implements ViewScene{
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()) {
                     case KeyCode.F12:
-                        Main.manager.mainStage.setFullScreen(false);
+                        manager.mainStage.setFullScreen(false);
                         break;
                     case KeyCode.F11:
-                        Main.manager.mainStage.setFullScreen(true);
+                        manager.mainStage.setFullScreen(true);
                         break;
                     case KeyCode.F9:
-                        var MissCreSce = new MissionCreatorScene();
-                        Main.manager.SwitchScene("MissCreSce", MissCreSce.GetJavafxScene());
+                        var MissCreSce = new MissionCreatorScene(manager);
+                        manager.SwitchScene("MissCreSce", MissCreSce.GetJavafxScene());
                     case KeyCode.F8:
-                        var PlanetAddScene = new PlanetAdditionScene();
-                        Main.manager.SwitchScene("PlanetAddScene", PlanetAddScene.GetJavafxScene());
+                        var PlanetAddScene = new PlanetAdditionScene(manager);
+                        manager.SwitchScene("PlanetAddScene", PlanetAddScene.GetJavafxScene());
                     case KeyCode.ESCAPE:
                         // pause the game
                     default: break;

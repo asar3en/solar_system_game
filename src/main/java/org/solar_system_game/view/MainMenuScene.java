@@ -19,21 +19,23 @@ import org.solar_system_game.Main;
 public class MainMenuScene implements ViewScene {
 
     Scene javaFxScene;
+    ViewManager manager;
 
-    public MainMenuScene() {
+    public MainMenuScene(ViewManager manager) {
+        this.manager = manager;
         Group root = new Group();
         setBackground(root);
         setUpTitle(root);
         setUpButtons(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight(), Color.BLACK);
+        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight(), Color.BLACK);
         setKeyShortcuts();
     }
 
     private void setBackground(Group root) {
         Rectangle bg = new Rectangle();
-        bg.widthProperty().bind(Main.manager.mainStage.widthProperty());
-        bg.heightProperty().bind(Main.manager.mainStage.heightProperty());
+        bg.widthProperty().bind(manager.mainStage.widthProperty());
+        bg.heightProperty().bind(manager.mainStage.heightProperty());
         bg.setFill(new ImagePattern(new Image("copyrightfreestars.png")));
         root.getChildren().add(bg);
     }
@@ -42,29 +44,29 @@ public class MainMenuScene implements ViewScene {
         Label title = new Label("Solar System Game!");
         title.setFont(Font.font("Arial", 50));
         title.setTextFill(Color.WHITE);
-        title.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(title.widthProperty()).divide(2));
-        title.layoutYProperty().bind(Main.manager.mainStage.heightProperty().subtract(title.heightProperty()).divide(3));
+        title.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(title.widthProperty()).divide(2));
+        title.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(title.heightProperty()).divide(3));
 
         root.getChildren().add(title);
     }
 
     private void setUpButtons(Group root) {
         Button newGameButton = new Button("Nowa gra");
-        newGameButton.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(newGameButton.widthProperty()).divide(2));
-        newGameButton.layoutYProperty().bind(Main.manager.mainStage.heightProperty().subtract(newGameButton.heightProperty()).divide(2));
-        newGameButton.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
+        newGameButton.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(newGameButton.widthProperty()).divide(2));
+        newGameButton.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(newGameButton.heightProperty()).divide(2));
+        newGameButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
 
         Button loadGameButton = new Button("Wczytaj gre");
         loadGameButton.layoutXProperty().bind(newGameButton.layoutXProperty());
         loadGameButton.layoutYProperty().bind(newGameButton.layoutYProperty().add(newGameButton.heightProperty().add(5)));
-        loadGameButton.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
+        loadGameButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
 
         loadGameButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(!Main.manager.SwitchScene("LoadGame", null)) {
-                    LoadGameScreen loadGameScreen = new LoadGameScreen();
-                    Main.manager.SwitchScene("LoadGame", loadGameScreen.GetJavafxScene());
+                if(!manager.SwitchScene("LoadGame", null)) {
+                    LoadGameScene loadGameScene = new LoadGameScene(manager);
+                    manager.SwitchScene("LoadGame", loadGameScene.GetJavafxScene());
                 }
             }
         });
@@ -72,14 +74,14 @@ public class MainMenuScene implements ViewScene {
         Button settingsButton = new Button("Opcje");
         settingsButton.layoutXProperty().bind(newGameButton.layoutXProperty());
         settingsButton.layoutYProperty().bind(loadGameButton.layoutYProperty().add(loadGameButton.heightProperty().add(5)));
-        settingsButton.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
+        settingsButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
 
         settingsButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(!Main.manager.SwitchScene("Settings", null)) {
-                    SettingsScreen optionsScreen = new SettingsScreen();
-                    Main.manager.SwitchScene("Settings", optionsScreen.GetJavafxScene());
+                if(!manager.SwitchScene("Settings", null)) {
+                    SettingsScene optionsScreen = new SettingsScene(manager);
+                    manager.SwitchScene("Settings", optionsScreen.GetJavafxScene());
                 }
             }
         });
@@ -87,7 +89,7 @@ public class MainMenuScene implements ViewScene {
         Button exitGameButton = new Button("Wyjście z gry");
         exitGameButton.layoutXProperty().bind(newGameButton.layoutXProperty());
         exitGameButton.layoutYProperty().bind(settingsButton.layoutYProperty().add(loadGameButton.heightProperty().add(5)));
-        exitGameButton.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
+        exitGameButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
 
         exitGameButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -106,14 +108,14 @@ public class MainMenuScene implements ViewScene {
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()) {
                     case KeyCode.F12:
-                        Main.manager.mainStage.setFullScreen(false);
+                        manager.mainStage.setFullScreen(false);
                         break;
                     case KeyCode.F11:
-                        Main.manager.mainStage.setFullScreen(true);
+                        manager.mainStage.setFullScreen(true);
                         break;
                     case KeyCode.F10:
-                        var mgS = new MainGameScreen();
-                        Main.manager.SwitchScene("MGS", mgS.GetJavafxScene());
+                        var mgS = new MainGameScene(manager);
+                        manager.SwitchScene("MGS", mgS.GetJavafxScene());
                         break;
                     default: break;
                 }

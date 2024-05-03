@@ -10,18 +10,20 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import org.solar_system_game.Main;
 
-public class LoadGameScreen implements ViewScene{
+public class LoadGameScene implements ViewScene{
     Scene javaFxScene;
+    ViewManager manager;
     @Override
     public Scene GetJavafxScene() {
         return javaFxScene;
     }
 
-    public LoadGameScreen() {
+    public LoadGameScene(ViewManager manager) {
+        this.manager = manager;
         Group root = new Group();
         setUpButtons(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight(), Color.BLACK);
+        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight(), Color.BLACK);
         setKeyShortcuts();
     }
 
@@ -30,8 +32,8 @@ public class LoadGameScreen implements ViewScene{
         Button deleteButton = new Button("USUŃ ZAPIS");
         Button backButton = new Button("POWRÓT DO MENU");
 
-        loadButton.layoutYProperty().bind(Main.manager.mainStage.heightProperty().divide(1.5));
-        loadButton.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(loadButton.widthProperty()).divide(3));
+        loadButton.layoutYProperty().bind(manager.mainStage.heightProperty().divide(1.5));
+        loadButton.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(loadButton.widthProperty()).divide(3));
 
         deleteButton.layoutXProperty().bind(loadButton.layoutXProperty().add(loadButton.widthProperty().add(10)));
         deleteButton.layoutYProperty().bind(loadButton.layoutYProperty());
@@ -42,7 +44,7 @@ public class LoadGameScreen implements ViewScene{
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Main.manager.SwitchScene("MainMenu", null);
+                manager.SwitchScene("MainMenu", null);
             }
         });
 
@@ -55,13 +57,13 @@ public class LoadGameScreen implements ViewScene{
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()) {
                     case KeyCode.F12:
-                        Main.manager.mainStage.setFullScreen(false);
+                        manager.mainStage.setFullScreen(false);
                         break;
                     case KeyCode.F11:
-                        Main.manager.mainStage.setFullScreen(true);
+                        manager.mainStage.setFullScreen(true);
                         break;
                     case KeyCode.BACK_SPACE:
-                        Main.manager.SwitchScene("MainMenu", null);
+                        manager.SwitchScene("MainMenu", null);
                     default: break;
                 }
             }

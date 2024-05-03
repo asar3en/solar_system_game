@@ -12,18 +12,20 @@ import javafx.scene.paint.Color;
 import org.solar_system_game.Main;
 import javafx.scene.control.CheckBox;
 
-public class SettingsScreen implements ViewScene{
+public class SettingsScene implements ViewScene{
     Scene javaFxScene;
+    ViewManager manager;
     @Override
     public Scene GetJavafxScene() {
         return javaFxScene;
     }
 
-    public SettingsScreen() {
+    public SettingsScene(ViewManager manager) {
+        this.manager = manager;
         Group root = new Group();
         setUpButtons(root);
 
-        javaFxScene = new Scene(root, Main.manager.mainStage.getWidth(), Main.manager.mainStage.getHeight(), Color.BLACK);
+        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight(), Color.BLACK);
         setKeyShortcuts();
     }
 
@@ -31,9 +33,9 @@ public class SettingsScreen implements ViewScene{
         VBox cbHolder = new VBox(10);
         CheckBox fullscreenCB = new CheckBox("Włącz tryb pełnoekranowy");
         CheckBox autoSave = new CheckBox("Włącz automatyczne zapisywanie");
-        cbHolder.layoutXProperty().bind(Main.manager.mainStage.widthProperty().subtract(cbHolder.widthProperty()).divide(2));
-        cbHolder.layoutYProperty().bind(Main.manager.mainStage.heightProperty().subtract(cbHolder.heightProperty()).divide(3));
-        cbHolder.prefWidthProperty().bind(Main.manager.mainStage.widthProperty().divide(6));
+        cbHolder.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(cbHolder.widthProperty()).divide(2));
+        cbHolder.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(cbHolder.heightProperty()).divide(3));
+        cbHolder.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
 
         cbHolder.getChildren().addAll(fullscreenCB, autoSave);
 
@@ -44,7 +46,7 @@ public class SettingsScreen implements ViewScene{
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Main.manager.SwitchScene("MainMenu", null);
+                manager.SwitchScene("MainMenu", null);
             }
         });
 
@@ -57,10 +59,10 @@ public class SettingsScreen implements ViewScene{
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()) {
                     case KeyCode.F12:
-                        Main.manager.mainStage.setFullScreen(false);
+                        manager.mainStage.setFullScreen(false);
                         break;
                     case KeyCode.F11:
-                        Main.manager.mainStage.setFullScreen(true);
+                        manager.mainStage.setFullScreen(true);
                         break;
                     default: break;
                 }
