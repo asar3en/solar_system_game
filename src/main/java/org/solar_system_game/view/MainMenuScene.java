@@ -3,6 +3,7 @@ package org.solar_system_game.view;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,6 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -37,6 +41,7 @@ public class MainMenuScene implements ViewScene {
         bg.widthProperty().bind(manager.mainStage.widthProperty());
         bg.heightProperty().bind(manager.mainStage.heightProperty());
         bg.setFill(new ImagePattern(new Image("copyrightfreestars.png")));
+
         root.getChildren().add(bg);
     }
 
@@ -51,55 +56,40 @@ public class MainMenuScene implements ViewScene {
     }
 
     private void setUpButtons(Group root) {
+        VBox mainMenu = new VBox();
+        mainMenu.setAlignment(Pos.CENTER);
+        mainMenu.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
+        mainMenu.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(mainMenu.widthProperty()).divide(2));
+        mainMenu.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(mainMenu.heightProperty()).divide(2));
+
         Button newGameButton = new Button("Nowa gra");
-        newGameButton.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(newGameButton.widthProperty()).divide(2));
-        newGameButton.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(newGameButton.heightProperty()).divide(2));
-        newGameButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
-
         Button loadGameButton = new Button("Wczytaj gre");
-        loadGameButton.layoutXProperty().bind(newGameButton.layoutXProperty());
-        loadGameButton.layoutYProperty().bind(newGameButton.layoutYProperty().add(newGameButton.heightProperty().add(5)));
-        loadGameButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
-
-        loadGameButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(!manager.SwitchScene("LoadGame", null)) {
-                    LoadGameScene loadGameScene = new LoadGameScene(manager);
-                    manager.SwitchScene("LoadGame", loadGameScene.GetJavafxScene());
-                }
-            }
-        });
-
         Button settingsButton = new Button("Opcje");
-        settingsButton.layoutXProperty().bind(newGameButton.layoutXProperty());
-        settingsButton.layoutYProperty().bind(loadGameButton.layoutYProperty().add(loadGameButton.heightProperty().add(5)));
-        settingsButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
-
-        settingsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(!manager.SwitchScene("Settings", null)) {
-                    SettingsScene optionsScreen = new SettingsScene(manager);
-                    manager.SwitchScene("Settings", optionsScreen.GetJavafxScene());
-                }
-            }
-        });
-
         Button exitGameButton = new Button("Wyjście z gry");
-        exitGameButton.layoutXProperty().bind(newGameButton.layoutXProperty());
-        exitGameButton.layoutYProperty().bind(settingsButton.layoutYProperty().add(loadGameButton.heightProperty().add(5)));
-        exitGameButton.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
 
-        exitGameButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                Platform.exit();
+
+        loadGameButton.setOnAction(event -> {
+            if(!manager.SwitchScene("LoadGame", null)) {
+                LoadGameScene loadGameScene = new LoadGameScene(manager);
+                manager.SwitchScene("LoadGame", loadGameScene.GetJavafxScene());
             }
         });
+        settingsButton.setOnAction(event -> {
+            if(!manager.SwitchScene("Settings", null)) {
+                SettingsScene optionsScreen = new SettingsScene(manager);
+                manager.SwitchScene("Settings", optionsScreen.GetJavafxScene());
+            }
+        });
+        exitGameButton.setOnAction(event -> {Platform.exit();});
 
+        //will just make buttons as wide as vbox
+        newGameButton.setMaxWidth(Double.MAX_VALUE);
+        loadGameButton.setMaxWidth(Double.MAX_VALUE);
+        settingsButton.setMaxWidth(Double.MAX_VALUE);
+        exitGameButton.setMaxWidth(Double.MAX_VALUE);
 
-        root.getChildren().addAll(newGameButton, loadGameButton, settingsButton, exitGameButton);
+        mainMenu.getChildren().addAll(newGameButton, loadGameButton, settingsButton, exitGameButton);
+        root.getChildren().add(mainMenu);
     }
 
     private void setKeyShortcuts() {
