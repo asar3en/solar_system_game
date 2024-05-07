@@ -104,8 +104,10 @@ public class MainMenuScene implements ViewScene {
                         manager.mainStage.setFullScreen(true);
                         break;
                     case KeyCode.F10:
-                        var mgS = new MainGameScene(manager);
-                        manager.SwitchScene("MGS", mgS.GetJavafxScene());
+                        if(!manager.SwitchScene("MGS", null)) {
+                            var mgS = new MainGameScene(manager);
+                            manager.SwitchScene("MGS", mgS.GetJavafxScene());
+                        }
                         break;
                     default: break;
                 }

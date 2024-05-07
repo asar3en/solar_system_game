@@ -1,14 +1,11 @@
 package org.solar_system_game.view;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
-import org.solar_system_game.Main;
 
 public class LoadGameScene implements ViewScene{
     Scene javaFxScene;
@@ -28,44 +25,32 @@ public class LoadGameScene implements ViewScene{
     }
 
     private void setUpButtons(Group root) {
+        var buttonsFlowPane = new FlowPane();
+        buttonsFlowPane.layoutYProperty().bind(manager.mainStage.heightProperty().divide(1.5));
+        buttonsFlowPane.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(buttonsFlowPane.widthProperty()).divide(3));
+
         Button loadButton = new Button("WCZYTAJ");
         Button deleteButton = new Button("USUŃ ZAPIS");
         Button backButton = new Button("POWRÓT DO MENU");
 
-        loadButton.layoutYProperty().bind(manager.mainStage.heightProperty().divide(1.5));
-        loadButton.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(loadButton.widthProperty()).divide(3));
+        backButton.setOnAction(event -> manager.SwitchScene("MainMenu", null));
 
-        deleteButton.layoutXProperty().bind(loadButton.layoutXProperty().add(loadButton.widthProperty().add(10)));
-        deleteButton.layoutYProperty().bind(loadButton.layoutYProperty());
-
-        backButton.layoutXProperty().bind(deleteButton.layoutXProperty().add(deleteButton.widthProperty().add(10)));
-        backButton.layoutYProperty().bind(loadButton.layoutYProperty());
-
-        backButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                manager.SwitchScene("MainMenu", null);
-            }
-        });
-
-        root.getChildren().addAll(loadButton,deleteButton,backButton);
+        buttonsFlowPane.getChildren().addAll(loadButton,deleteButton,backButton);
+        root.getChildren().add(buttonsFlowPane);
     }
 
     private void setKeyShortcuts() {
-        javaFxScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case KeyCode.F12:
-                        manager.mainStage.setFullScreen(false);
-                        break;
-                    case KeyCode.F11:
-                        manager.mainStage.setFullScreen(true);
-                        break;
-                    case KeyCode.BACK_SPACE:
-                        manager.SwitchScene("MainMenu", null);
-                    default: break;
-                }
+        javaFxScene.setOnKeyPressed(keyEvent -> {
+            switch (keyEvent.getCode()) {
+                case KeyCode.F12:
+                    manager.mainStage.setFullScreen(false);
+                    break;
+                case KeyCode.F11:
+                    manager.mainStage.setFullScreen(true);
+                    break;
+                case KeyCode.BACK_SPACE:
+                    manager.SwitchScene("MainMenu", null);
+                default: break;
             }
         });
     }
