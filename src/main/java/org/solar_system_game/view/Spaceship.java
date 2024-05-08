@@ -8,6 +8,12 @@ package org.solar_system_game.view;
  Payload mass: 24000 kg (we shall assume payload refers entirely to fuel mass)
 
  Based off https://en.wikipedia.org/wiki/Space_Shuttle_orbiter
+
+ Maybe will be useful for later fuel calculations:
+ Tsiolkovsky rocket equation: maxvchange = I_sp * g_0 * natural log (m_0/m_f)
+ - where specific impulse I_sp value of our assumed fuel is 450s
+ F_thrust =  I_sp * g_0 * dot_m
+ - where dot_m is the propellant mass flow rate, here 400 kg/s
  ***/
 
 public class Spaceship {
