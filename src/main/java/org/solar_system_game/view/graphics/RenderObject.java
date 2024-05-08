@@ -1,7 +1,6 @@
 package org.solar_system_game.view.graphics;
 
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 

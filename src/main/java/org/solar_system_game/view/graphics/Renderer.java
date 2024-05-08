@@ -1,5 +1,6 @@
 package org.solar_system_game.view.graphics;
 
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 
@@ -11,8 +12,20 @@ import java.util.Map;
 public class Renderer {
     public Camera Cam;
     public List<RenderObject> renObjs = new ArrayList<RenderObject>();
+    public Map<String, Label> objectLabels = new HashMap<>();
     public Pane renderPane;
     public Renderer(Pane renderPane, Camera camera) {this.renderPane = renderPane; this.Cam = camera;}
+
+    public void GenerateLabelNodes() {
+        for(RenderObject a : renObjs) {
+            Label text = new Label(a.Label);
+            text.setLayoutX(a.PositionX);
+            text.setLayoutY(a.PositionY+a.Radius);
+            text.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+            objectLabels.put(a.Label, text);
+            renderPane.getChildren().add(text);
+        }
+    }
 
     public void AddToRenderList(RenderObject obj)
     {
@@ -24,6 +37,8 @@ public class Renderer {
         for(RenderObject a : renObjs) {
             renderPane.getChildren().add(a.GetNodeWithCurrSet());
         }
+        for(Map.Entry<String, Label> a : objectLabels.entrySet())
+            renderPane.getChildren().add(a.getValue());
     }
 
     public void UpdatePositions(Map<String, Pair<Double, Double>> positions)
@@ -32,6 +47,11 @@ public class Renderer {
             if(positions.containsKey(a.Label)) {
                 Pair<Double, Double> pixelCords = positions.get(a.Label);
                 a.ChangePos(pixelCords.getKey(), pixelCords.getValue());
+            }
+            if(objectLabels.containsKey(a.Label)) {
+                Label l = objectLabels.get(a.Label);
+                l.setLayoutX(a.PositionX);
+                l.setLayoutY(a.PositionY + a.Radius);
             }
         }
     }

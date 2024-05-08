@@ -70,6 +70,7 @@ public class MainGameScene implements ViewScene{
 
         MainRenderer.AddToRenderList(sun);
         MainRenderer.AddToRenderList(earth);
+        MainRenderer.GenerateLabelNodes();
 
         timer = new AnimationTimer() {
             final double EarthOrbit = 149_600_000;
@@ -83,6 +84,7 @@ public class MainGameScene implements ViewScene{
                             (EarthOrbit*java.lang.Math.sin(frameCount*0.05))
                         );
                         pos.put("Earth", earthPos);
+
                     //CALCULATE REAL POSITION IN RELATION TO CAMERA
                     var scaledPos = MainRenderer.ChangeRealRelPosToPixelRel(pos);
 
