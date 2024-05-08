@@ -6,10 +6,10 @@ public class CelestialBody {
     double mass;
     double radius;
     double distFromOrbitedBody;
-    double meanInitVelocity;
+    public double meanInitVelocity;
     int bodyID;
     public double[] bodyCoordinates;
-    double[] bodyVelocity;
+    public  double[] bodyVelocity;
     double[] bodyAcceleration;
 
 
@@ -26,16 +26,18 @@ public class CelestialBody {
 
     public void initCoordinates(){
         Random rand = new Random();
-        double w = rand.nextDouble((double) (2*Math.PI));
-        this.bodyCoordinates[0] = (double) (this.distFromOrbitedBody*Math.cos(w));
-        this.bodyCoordinates[1] = (double) (this.distFromOrbitedBody*Math.sin(w));
-        this.bodyVelocity[0] = (double) (this.meanInitVelocity*Math.sin(w));
-        this.bodyVelocity[1] = (double) (this.meanInitVelocity*Math.cos(w));
+        double w = 0;
+        this.bodyCoordinates[0] = (this.distFromOrbitedBody);
+        this.bodyCoordinates[1] = 0;
+        this.bodyVelocity[0] = 0;
+        this.bodyVelocity[1] = (this.meanInitVelocity);
     }
 
 
     public void nextPosition(CelestialBody[] bodiesSet){
-        int timestep = 2; //temp value, needs changing to properly scaled time step
+        double timestep = 100; //temp value, needs changing to properly scaled time step
+        this.bodyAcceleration[0] = 0.0;
+        this.bodyAcceleration[1] = 0.0;
 
         for (int i = 0; i < bodiesSet.length; i++) {
 

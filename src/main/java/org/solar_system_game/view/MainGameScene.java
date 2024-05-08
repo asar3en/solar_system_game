@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Pair;
+import org.solar_system_game.Main;
 import org.solar_system_game.sim.CelestialBody;
 import org.solar_system_game.sim.SolarSystemParameters;
 import org.solar_system_game.view.graphics.*;
@@ -174,6 +175,7 @@ public class MainGameScene implements ViewScene{
                 double elapsedTime = (l - lastUpdateTime[0]) / 1_000_000_000.0;
                 if (elapsedTime >= TARGET_UPDATE_INT) {
                     //CALCULATE THEORETICAL POSITIONS
+                    for(int i =0; i <1000; i++){
                     Mercury.nextPosition(celBodies);
                     Venus.nextPosition(celBodies);
                     Earth.nextPosition(celBodies);
@@ -182,8 +184,9 @@ public class MainGameScene implements ViewScene{
                     Saturn.nextPosition(celBodies);
                     Uranus.nextPosition(celBodies);
                     Neptune.nextPosition(celBodies);
-                    Pluto.nextPosition(celBodies);
+                    Pluto.nextPosition(celBodies);}
 
+                    System.out.println("INITLA: " + Mercury.meanInitVelocity + "CURRENT" + Mercury.bodyVelocity[0] + " " + Mercury.bodyVelocity[1]);
 
                     realCelPositions.put("Mercury", new Pair<>(Mercury.bodyCoordinates[0],Mercury.bodyCoordinates[1]));
                     realCelPositions.put("Venus", new Pair<>(Venus.bodyCoordinates[0],Venus.bodyCoordinates[1]));

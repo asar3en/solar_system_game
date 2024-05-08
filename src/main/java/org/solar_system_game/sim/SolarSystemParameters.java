@@ -4,7 +4,7 @@ package org.solar_system_game.sim;
 
 public class SolarSystemParameters {
 
-    public static final double G = 6.67300E-11;
+    public static final double G = 6.67300E-20;
     public static final double[] celestialBodyMasses = {
             //---Sun & Planets
             1.9885*Math.pow(10, 30), //Sun
