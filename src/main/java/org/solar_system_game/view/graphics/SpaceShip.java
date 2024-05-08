@@ -31,11 +31,11 @@ public class SpaceShip {
     }
 
     public void ChangeSize(double newWidth, double newHeight) {
-        if(newWidth > 50)
+        if(newWidth > 100)
             Width = newWidth;
         else
-            Width = 50;
-        if(newHeight > 25)
+            Width = 100;
+        if(newHeight > 50)
             Height = newHeight;
         else
             Height = 25;

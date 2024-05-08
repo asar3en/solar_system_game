@@ -26,11 +26,11 @@ public class CelestialBody {
 
     public void initCoordinates(){
         Random rand = new Random();
-        double w = 0;
-        this.bodyCoordinates[0] = (this.distFromOrbitedBody);
+        double w = rand.nextDouble()*2*Math.PI;
+        this.bodyCoordinates[0] = this.distFromOrbitedBody;
         this.bodyCoordinates[1] = 0;
         this.bodyVelocity[0] = 0;
-        this.bodyVelocity[1] = (this.meanInitVelocity);
+        this.bodyVelocity[1] = this.meanInitVelocity;
     }
 
 

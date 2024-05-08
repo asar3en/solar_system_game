@@ -20,21 +20,30 @@ public class Spaceship {
     double mass;
     double fuel;
     int bodyID;
-    double[] bodyCoordinates;
-    double[] bodyVelocity;
-    double[] bodyAcceleration;
-    double[] spaceshipGeneratedAccel;
+    public double[] bodyCoordinates = new double[2];
+    double[] bodyVelocity = new double[2];;
+    double[] bodyAcceleration = new double[2];;
+    double[] spaceshipGeneratedAccel = new double[2];;
 
     public Spaceship(double m, double f, int i) {
         fuel = f; //initial value maybe limited for a challenge? Also in litres. Likely ~100
         mass = (double) (m + 1.1*f); //in kg, 1.1 being the density of fuel used
         //this form should make it easier to add how fuel will reduce over time
         bodyID = i;
+        bodyCoordinates[0] = 0;
+        bodyCoordinates[1] = 778.5*Math.pow(10, 6);
+        bodyVelocity[0] = SolarSystemParameters.celestialBodyMeanOrbitalVelocities[4];
     }
 
-    public void nextPosition(CelestialBody[] bodiesSet){
-        int timestep = 2; //temp value, needs changing to properly scaled time step
-
+    public void nextPosition(CelestialBody[] bodiesSet, Boolean isAcc, double angle){
+        int timestep = 100; //temp value, needs changing to properly scaled time step
+        if(isAcc) {
+            this.bodyAcceleration[0] = -0.00001*Math.sin(angle); //arbitrary number to not make acc too fast
+            this.bodyAcceleration[1] = -0.00001*Math.cos(angle); //sin for x, cos for y because angle is calculated from y axis not x
+        } else {
+            this.bodyAcceleration[0] = 0.0;
+            this.bodyAcceleration[1] = 0.0;
+        }
         for (int i = 0; i < bodiesSet.length; i++) {
 
             if (this.bodyID != bodiesSet[i].bodyID) {

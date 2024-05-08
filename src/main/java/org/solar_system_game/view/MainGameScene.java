@@ -14,6 +14,7 @@ import javafx.util.Pair;
 import org.solar_system_game.Main;
 import org.solar_system_game.sim.CelestialBody;
 import org.solar_system_game.sim.SolarSystemParameters;
+import org.solar_system_game.sim.Spaceship;
 import org.solar_system_game.view.graphics.*;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class MainGameScene implements ViewScene{
     private double lastMouseX;
     private double lastMouseY;
     int frameCount = 0;
-
+    Boolean isShipAccelerating = false;
 
     @Override
     public Scene GetJavafxScene() {
@@ -55,9 +56,17 @@ public class MainGameScene implements ViewScene{
         final long[] lastUpdateTime = {0};
         final double TARGET_UPDATE_INT = 1.0 / 60;
 
+        Spaceship simSS = new Spaceship(
+                110000,
+                1,
+                10
+        );
+
+
         Camera cam = new Camera(0,0, 160_000_000, 90_000_000, javaFxScene.getWidth(), javaFxScene.getHeight());
-        SpaceShip ss = new SpaceShip(70_000_000.0/cam.GetXFactor(), 5_000_000.0/cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreestarship.png"));
+        SpaceShip ss = new SpaceShip(simSS.bodyCoordinates[0]/cam.GetXFactor(), simSS.bodyCoordinates[1]/cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreespaceship.png"));
         MainRenderer = new Renderer(renderPane, cam, ss);
+
 
         // ---- STARTING SIM DATA
 
@@ -139,7 +148,7 @@ public class MainGameScene implements ViewScene{
        realCelPositions.put("Neptune", new Pair<>(Neptune.bodyCoordinates[0],Neptune.bodyCoordinates[1]));
        realCelPositions.put("Pluto", new Pair<>(Pluto.bodyCoordinates[0],Pluto.bodyCoordinates[1]));
 
-       realCelPositions.put("SpaceShip", new Pair<>(70_000_000.0, 5_000_000.0));
+       realCelPositions.put("SpaceShip", new Pair<>(simSS.bodyCoordinates[0], simSS.bodyCoordinates[1]));
 
        Map<String, Double> radii = new HashMap<>();
        radii.put("Sun", SolarSystemParameters.celestialBodyMeanRadii[0]);
@@ -152,6 +161,7 @@ public class MainGameScene implements ViewScene{
        radii.put("Uranus", SolarSystemParameters.celestialBodyMeanRadii[7]);
        radii.put("Neptune", SolarSystemParameters.celestialBodyMeanRadii[8]);
        radii.put("Pluto", SolarSystemParameters.celestialBodyMeanRadii[9]);
+       radii.put("SpaceShip", ss.Width);
 
         // --- CREATING RENDERING OBJECTS VERY IMPORTANT FOR THE NAMES IN RADII relCelPositions and RenderObjects to be the same!
 
@@ -175,18 +185,19 @@ public class MainGameScene implements ViewScene{
                 double elapsedTime = (l - lastUpdateTime[0]) / 1_000_000_000.0;
                 if (elapsedTime >= TARGET_UPDATE_INT) {
                     //CALCULATE THEORETICAL POSITIONS
-                    for(int i =0; i <1000; i++){
-                    Mercury.nextPosition(celBodies);
-                    Venus.nextPosition(celBodies);
-                    Earth.nextPosition(celBodies);
-                    Mars.nextPosition(celBodies);
-                    Jupiter.nextPosition(celBodies);
-                    Saturn.nextPosition(celBodies);
-                    Uranus.nextPosition(celBodies);
-                    Neptune.nextPosition(celBodies);
-                    Pluto.nextPosition(celBodies);}
-
-                    System.out.println("INITLA: " + Mercury.meanInitVelocity + "CURRENT" + Mercury.bodyVelocity[0] + " " + Mercury.bodyVelocity[1]);
+                    if(!isPaused)
+                    for(int i =0; i <100; i++){
+                        Mercury.nextPosition(celBodies);
+                        Venus.nextPosition(celBodies);
+                        Earth.nextPosition(celBodies);
+                        Mars.nextPosition(celBodies);
+                        Jupiter.nextPosition(celBodies);
+                        Saturn.nextPosition(celBodies);
+                        Uranus.nextPosition(celBodies);
+                        Neptune.nextPosition(celBodies);
+                        Pluto.nextPosition(celBodies);
+                        simSS.nextPosition(celBodies, isShipAccelerating, ss.Rotation);
+                    }
 
                     realCelPositions.put("Mercury", new Pair<>(Mercury.bodyCoordinates[0],Mercury.bodyCoordinates[1]));
                     realCelPositions.put("Venus", new Pair<>(Venus.bodyCoordinates[0],Venus.bodyCoordinates[1]));
@@ -197,6 +208,7 @@ public class MainGameScene implements ViewScene{
                     realCelPositions.put("Uranus", new Pair<>(Uranus.bodyCoordinates[0],Uranus.bodyCoordinates[1]));
                     realCelPositions.put("Neptune", new Pair<>(Neptune.bodyCoordinates[0],Neptune.bodyCoordinates[1]));
                     realCelPositions.put("Pluto", new Pair<>(Pluto.bodyCoordinates[0],Pluto.bodyCoordinates[1]));
+                    realCelPositions.put("SpaceShip", new Pair<>(simSS.bodyCoordinates[0], simSS.bodyCoordinates[1]));
 
                     //CALCULATE REAL POSITION IN RELATION TO CAMERA
                     var scaledPos = MainRenderer.ChangeRealPosToPixelRel(realCelPositions);
@@ -258,11 +270,9 @@ public class MainGameScene implements ViewScene{
         startPause.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(startPause.heightProperty()).subtract(50));
         startPause.setOnAction((e) -> {
             if(isPaused) {
-                timer.start();
                 isPaused = false;
             }
             else {
-                timer.stop();
                 isPaused = true;
             }
         });
@@ -337,13 +347,14 @@ public class MainGameScene implements ViewScene{
             switch (keyEvent.getCode()) {
                 case KeyCode.W:
                     //move the ship, add acceleration, etc.
+                    isShipAccelerating = true;
                     break;
                 case KeyCode.A:
-                    MainRenderer.spaceShip.Rotation+=0.0174533; //adds around 1 degree
+                    MainRenderer.spaceShip.Rotation+=0.0174533*5; //adds around 5 degrees
                     System.out.println("Ship rotation: " + MainRenderer.spaceShip.Rotation);
                     break;
                 case KeyCode.D:
-                    MainRenderer.spaceShip.Rotation-=0.0174533; //adds around 1 degree
+                    MainRenderer.spaceShip.Rotation-=0.0174533*5; //adds around 5 degrees
                     System.out.println("Ship rotation: " + MainRenderer.spaceShip.Rotation);
                     break;
                 case KeyCode.S:
@@ -363,6 +374,16 @@ public class MainGameScene implements ViewScene{
                 case KeyCode.ESCAPE:
                     // pause the game
                 default: break;
+            }
+        });
+
+        javaFxScene.setOnKeyReleased(keyEvent -> {
+            switch (keyEvent.getCode()) {
+                case KeyCode.W:
+                    isShipAccelerating = false;
+                    break;
+                default:
+                    break;
             }
         });
     }
