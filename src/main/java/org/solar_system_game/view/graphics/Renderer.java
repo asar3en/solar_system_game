@@ -96,7 +96,7 @@ public class Renderer {
     }
 
     //Moves the real coordinates to be relative to the camera, and scales them depending on current zoom
-    public Map<String, Pair<Double, Double>> ChangeRealRelPosToPixelRel(Map<String, Pair<Double, Double>> pos)
+    public Map<String, Pair<Double, Double>> ChangeRealPosToPixelRel(Map<String, Pair<Double, Double>> pos)
     {
         Map<String, Pair<Double, Double>> pixelCords = new HashMap<>();
         for(Map.Entry<String, Pair<Double, Double>> entry : pos.entrySet()) {

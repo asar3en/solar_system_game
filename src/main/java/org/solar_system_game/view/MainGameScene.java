@@ -39,8 +39,6 @@ public class MainGameScene implements ViewScene{
         setUpGameRendering(root);
         setUpButtons(root);
         setUpGameInfo(root);
-
-
         setKeyShortcuts();
     }
 
@@ -59,16 +57,19 @@ public class MainGameScene implements ViewScene{
         MainRenderer = new Renderer(renderPane, cam, ss);
 
         // ----- SET UP ALL OBJECTS POSITION AND RADII FOR CEL.
-        Map<String, Pair<Double, Double>> pos = new HashMap<>();
+
+        // ---- STARTING SIM DATA
+        Map<String, Pair<Double, Double>> realCelPositions = new HashMap<>();
         Pair<Double, Double> sunData = new Pair<>(0.0, 0.0);
-        pos.put("SpaceShip", new Pair<>(70_000_000.0, 5_000_000.0));
-        pos.put("Sun", sunData);
+        realCelPositions.put("SpaceShip", new Pair<>(70_000_000.0, 5_000_000.0));
+        realCelPositions.put("Sun", sunData);
 
         Map<String, Double> radii = new HashMap<>();
         radii.put("Earth", 6371.0*1000);
         radii.put("Sun", 695_508.0);
         radii.put("SpaceShip", 10.0);//not a radius but is used for resizing
 
+        // --- CREATING RENDERING OBJECTS VERY IMPORTANT FOR THE NAMES IN RADII relCelPositions and RenderObjects to be the same!
         RenderObject sun = new RenderObject(Color.YELLOW, "Sun");
         RenderObject earth = new RenderObject(Color.BLUE, "Earth");
 
@@ -87,10 +88,10 @@ public class MainGameScene implements ViewScene{
                             (EarthOrbit*java.lang.Math.cos(frameCount*0.05)),
                             (EarthOrbit*java.lang.Math.sin(frameCount*0.05))
                         );
-                        pos.put("Earth", earthPos);
+                        realCelPositions.put("Earth", earthPos);
 
                     //CALCULATE REAL POSITION IN RELATION TO CAMERA
-                    var scaledPos = MainRenderer.ChangeRealRelPosToPixelRel(pos);
+                    var scaledPos = MainRenderer.ChangeRealPosToPixelRel(realCelPositions);
 
                     //UPDATE THE POSITIONS AND RADII
                     MainRenderer.UpdatePositions(scaledPos);
