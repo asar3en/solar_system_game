@@ -14,7 +14,12 @@ public class Renderer {
     public List<RenderObject> renObjs = new ArrayList<RenderObject>();
     public Map<String, Label> objectLabels = new HashMap<>();
     public Pane renderPane;
-    public Renderer(Pane renderPane, Camera camera) {this.renderPane = renderPane; this.Cam = camera;}
+    public  SpaceShip spaceShip;
+    public Renderer(Pane renderPane, Camera camera, SpaceShip ss) {
+        this.renderPane = renderPane;
+        this.Cam = camera;
+        this.spaceShip = ss;
+    }
 
     public void GenerateLabelNodes() {
         for(RenderObject a : renObjs) {
@@ -25,6 +30,12 @@ public class Renderer {
             objectLabels.put(a.Label, text);
             renderPane.getChildren().add(text);
         }
+        Label ssText = new Label("SpaceShip");
+        ssText.setLayoutX(spaceShip.PosX);
+        ssText.setLayoutY(spaceShip.PosY);
+        ssText.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+        objectLabels.put("SpaceShip", ssText);
+        renderPane.getChildren().add(ssText);
     }
 
     public void AddToRenderList(RenderObject obj)
@@ -39,10 +50,15 @@ public class Renderer {
         }
         for(Map.Entry<String, Label> a : objectLabels.entrySet())
             renderPane.getChildren().add(a.getValue());
+        renderPane.getChildren().add(spaceShip.imageView);
     }
 
     public void UpdatePositions(Map<String, Pair<Double, Double>> positions)
     {
+        if(objectLabels.containsKey("SpaceShip")) {
+            Pair<Double, Double> ssCords = positions.get("SpaceShip");
+            spaceShip.ChangePosition(ssCords.getKey(), ssCords.getValue());
+        }
         for(RenderObject a : renObjs) {
             if(positions.containsKey(a.Label)) {
                 Pair<Double, Double> pixelCords = positions.get(a.Label);
@@ -54,6 +70,9 @@ public class Renderer {
                 l.setLayoutY(a.PositionY + a.Radius);
             }
         }
+        Label ss = objectLabels.get("SpaceShip");
+        ss.setLayoutX(spaceShip.PosX);
+        ss.setLayoutY(spaceShip.PosY);
     }
     public void UpdateRadiiFromReal(Map<String, Double> radii)
     {
@@ -62,6 +81,13 @@ public class Renderer {
                 double realRadius = radii.get(a.Label);
                 a.ChangeRadius(realRadius / Cam.GetXFactor());
             }
+        }
+        if (radii.containsKey("SpaceShip")) {
+            double spaceShipWidth = radii.get("SpaceShip");
+            spaceShip.ChangeSize(
+                    spaceShipWidth / Cam.GetXFactor(),
+                    (spaceShipWidth/ 2) / Cam.GetYFactor()
+            );
         }
     }
 

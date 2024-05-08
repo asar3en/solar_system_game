@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -54,16 +55,19 @@ public class MainGameScene implements ViewScene{
         final double TARGET_UPDATE_INT = 1.0 / 60;
 
         Camera cam = new Camera(0,0, 160_000_000, 90_000_000, javaFxScene.getWidth(), javaFxScene.getHeight());
-        MainRenderer = new Renderer(renderPane, cam);
+        SpaceShip ss = new SpaceShip(70_000_000.0/cam.GetXFactor(), 5_000_000.0/cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreestarship.png"));
+        MainRenderer = new Renderer(renderPane, cam, ss);
 
         // ----- SET UP ALL OBJECTS POSITION AND RADII FOR CEL.
         Map<String, Pair<Double, Double>> pos = new HashMap<>();
         Pair<Double, Double> sunData = new Pair<>(0.0, 0.0);
+        pos.put("SpaceShip", new Pair<>(70_000_000.0, 5_000_000.0));
         pos.put("Sun", sunData);
 
         Map<String, Double> radii = new HashMap<>();
         radii.put("Earth", 6371.0*1000);
         radii.put("Sun", 695_508.0);
+        radii.put("SpaceShip", 10.0);//not a radius but is used for resizing
 
         RenderObject sun = new RenderObject(Color.YELLOW, "Sun");
         RenderObject earth = new RenderObject(Color.BLUE, "Earth");
