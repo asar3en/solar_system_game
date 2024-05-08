@@ -1,4 +1,4 @@
-package org.solar_system_game.view;
+package org.solar_system_game.sim;
 
 /***
  Some figures, to use later during initialisation:
@@ -17,17 +17,17 @@ package org.solar_system_game.view;
  ***/
 
 public class Spaceship {
-    float mass;
-    float fuel;
+    double mass;
+    double fuel;
     int bodyID;
-    float[] bodyCoordinates;
-    float[] bodyVelocity;
-    float[] bodyAcceleration;
-    float[] spaceshipGeneratedAccel;
+    double[] bodyCoordinates;
+    double[] bodyVelocity;
+    double[] bodyAcceleration;
+    double[] spaceshipGeneratedAccel;
 
-    public Spaceship(float m, float f, int i) {
+    public Spaceship(double m, double f, int i) {
         fuel = f; //initial value maybe limited for a challenge? Also in litres. Likely ~100
-        mass = (float) (m + 1.1*f); //in kg, 1.1 being the density of fuel used
+        mass = (double) (m + 1.1*f); //in kg, 1.1 being the density of fuel used
         //this form should make it easier to add how fuel will reduce over time
         bodyID = i;
     }
@@ -38,11 +38,11 @@ public class Spaceship {
         for (int i = 0; i < bodiesSet.length; i++) {
 
             if (this.bodyID != bodiesSet[i].bodyID) {
-                float r_x = this.bodyCoordinates[0] - bodiesSet[i].bodyCoordinates[0];
-                float r_y = this.bodyCoordinates[1] - bodiesSet[i].bodyCoordinates[1];
+                double r_x = this.bodyCoordinates[0] - bodiesSet[i].bodyCoordinates[0];
+                double r_y = this.bodyCoordinates[1] - bodiesSet[i].bodyCoordinates[1];
 
-                float r_length = (float) Math.sqrt(r_x*r_x + r_y*r_y);
-                float a_total = (float) ((-1.0 * SolarSystemParameters.G * bodiesSet[i].mass)/(r_length*r_length));
+                double r_length = (double) Math.sqrt(r_x*r_x + r_y*r_y);
+                double a_total = (double) ((-1.0 * SolarSystemParameters.G * bodiesSet[i].mass)/(r_length*r_length));
                 r_x = r_x/r_length;
                 r_y = r_y/r_length;
                 this.bodyAcceleration[0] += r_x * a_total;

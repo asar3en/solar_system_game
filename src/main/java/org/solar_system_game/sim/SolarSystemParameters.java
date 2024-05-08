@@ -1,4 +1,4 @@
-package org.solar_system_game.view;
+package org.solar_system_game.sim;
 
 //data primarily taken from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
