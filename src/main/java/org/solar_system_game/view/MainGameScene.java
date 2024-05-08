@@ -226,6 +226,19 @@ public class MainGameScene implements ViewScene{
         });
         javaFxScene.setOnKeyPressed(keyEvent -> {
             switch (keyEvent.getCode()) {
+                case KeyCode.W:
+                    //move the ship, add acceleration, etc.
+                    break;
+                case KeyCode.A:
+                    MainRenderer.spaceShip.Rotation+=0.0174533; //adds around 1 degree
+                    System.out.println("Ship rotation: " + MainRenderer.spaceShip.Rotation);
+                    break;
+                case KeyCode.D:
+                    MainRenderer.spaceShip.Rotation-=0.0174533; //adds around 1 degree
+                    System.out.println("Ship rotation: " + MainRenderer.spaceShip.Rotation);
+                    break;
+                case KeyCode.S:
+                    break;
                 case KeyCode.F12:
                     manager.mainStage.setFullScreen(false);
                     break;

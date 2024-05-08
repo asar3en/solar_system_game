@@ -72,7 +72,11 @@ public class Renderer {
         }
         Label ss = objectLabels.get("SpaceShip");
         ss.setLayoutX(spaceShip.PosX);
-        ss.setLayoutY(spaceShip.PosY);
+        ss.setLayoutY(spaceShip.PosY+spaceShip.Height*2);
+        while(spaceShip.Rotation > java.lang.Math.PI * 2) {
+            spaceShip.Rotation = spaceShip.Rotation - 2 * Math.PI;
+        }
+        spaceShip.imageView.setRotate(-spaceShip.Rotation* (180.0 / Math.PI));
     }
     public void UpdateRadiiFromReal(Map<String, Double> radii)
     {
