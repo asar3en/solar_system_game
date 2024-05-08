@@ -9,9 +9,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import org.solar_system_game.view.graphics.CircleRend;
-import org.solar_system_game.view.graphics.RenderObject;
-import org.solar_system_game.view.graphics.Renderer;
+import javafx.util.Pair;
+import org.solar_system_game.view.graphics.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainGameScene implements ViewScene{
     Scene javaFxScene;
@@ -21,6 +23,8 @@ public class MainGameScene implements ViewScene{
     Renderer MainRenderer;
     private double lastMouseX;
     private double lastMouseY;
+    int frameCount = 0;
+
 
     @Override
     public Scene GetJavafxScene() {
@@ -30,38 +34,66 @@ public class MainGameScene implements ViewScene{
     public MainGameScene(ViewManager manager) {
         this.manager = manager;
         Group root = new Group();
+        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight(), Color.BLACK);
         setUpGameRendering(root);
-
         setUpButtons(root);
         setUpGameInfo(root);
 
-        javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight(), Color.BLACK);
+
         setKeyShortcuts();
     }
 
     private void setUpGameRendering(Group root) {
         Pane renderPane = new Pane();
+        renderPane.setMinWidth(javaFxScene.getWidth());
+        renderPane.setMinHeight(javaFxScene.getHeight());
         final double[] count = {0};
         root.getChildren().add(renderPane);
 
         final long[] lastUpdateTime = {0};
         final double TARGET_UPDATE_INT = 1.0 / 60;
 
-        MainRenderer = new Renderer();
-        MainRenderer.AddToRenderList(new CircleRend(700, 200, 14, Color.RED));
-        MainRenderer.AddToRenderList(new CircleRend(1000, 600, 14, Color.GREEN));
-        MainRenderer.AddToRenderList(new CircleRend(300, 600, 14, Color.YELLOW));
-        MainRenderer.AddToRenderList(new CircleRend(0, 800, 14, Color.BLUE));
+        Camera cam = new Camera(0,0, 160_000_000, 90_000_000, javaFxScene.getWidth(), javaFxScene.getHeight());
+        MainRenderer = new Renderer(renderPane, cam);
+
+        // ----- SET UP ALL OBJECTS POSITION AND RADII FOR CEL.
+        Map<String, Pair<Double, Double>> pos = new HashMap<>();
+        Pair<Double, Double> sunData = new Pair<>(0.0, 0.0);
+        pos.put("Sun", sunData);
+
+        Map<String, Double> radii = new HashMap<>();
+        radii.put("Earth", 6371.0*1000);
+        radii.put("Sun", 695_508.0);
+
+        RenderObject sun = new RenderObject(Color.YELLOW, "Sun");
+        RenderObject earth = new RenderObject(Color.BLUE, "Earth");
+
+        MainRenderer.AddToRenderList(sun);
+        MainRenderer.AddToRenderList(earth);
+
         timer = new AnimationTimer() {
+            final double EarthOrbit = 149_600_000;
             @Override
             public void handle(long l) {
                 double elapsedTime = (l - lastUpdateTime[0]) / 1_000_000_000.0;
                 if (elapsedTime >= TARGET_UPDATE_INT) {
-                    renderPane.getChildren().clear();
+                    //CALCULATE THEORETICAL POSITIONS
+                        Pair<Double, Double> earthPos = new Pair<> (
+                            (EarthOrbit*java.lang.Math.cos(frameCount*0.05)),
+                            (EarthOrbit*java.lang.Math.sin(frameCount*0.05))
+                        );
+                        pos.put("Earth", earthPos);
+                    //CALCULATE REAL POSITION IN RELATION TO CAMERA
+                    var scaledPos = MainRenderer.ChangeRealRelPosToPixelRel(pos);
 
-                    MainRenderer.Redraw(renderPane);
+                    //UPDATE THE POSITIONS AND RADII
+                    MainRenderer.UpdatePositions(scaledPos);
+                    MainRenderer.UpdateRadiiFromReal(radii);
 
+                    //CLEAR AND RENDER
+                    MainRenderer.Redraw();
                     lastUpdateTime[0] = l;
+                    frameCount++;
                 }
             }
         };
@@ -149,26 +181,41 @@ public class MainGameScene implements ViewScene{
     }
 
     private void setKeyShortcuts() {
+        //changes camera coords on resize
+        javaFxScene.widthProperty().addListener(event -> {
+            MainRenderer.Cam.PixelWidth = (javaFxScene.getWidth() >= 1600) ? javaFxScene.getWidth() : 1600;
+        });
+        javaFxScene.heightProperty().addListener(event -> {
+            MainRenderer.Cam.PixelHeight = (javaFxScene.getHeight() >= 900) ? javaFxScene.getHeight() : 900;
+        });
+
+        //when you click with a mouse it gets its current position
         javaFxScene.setOnMousePressed(event -> {
             lastMouseX = event.getSceneX();
             lastMouseY = event.getSceneY();
         });
+        //and when you drag it computes delta and changes the coordinates "in camera"
         javaFxScene.setOnMouseDragged(keyEvent -> {
-            MainRenderer.ShiftScreenCords(
-                    keyEvent.getSceneX() - lastMouseX,
-                    keyEvent.getSceneY() - lastMouseY
-            );
-            lastMouseX = keyEvent.getSceneX();
-            lastMouseY = keyEvent.getSceneY();
+            double currX = keyEvent.getSceneX();
+            double currY = keyEvent.getSceneY();
+
+            //Translates the change in pixels to change in real coordinates, almost sure it is wrong will test later
+            MainRenderer.Cam.TopLeftRealXCord = MainRenderer.Cam.TopLeftRealXCord -
+                    (currX - lastMouseX)*MainRenderer.Cam.GetXFactor();
+            MainRenderer.Cam.TopLeftRealYCord = MainRenderer.Cam.TopLeftRealYCord -
+                    (currY - lastMouseY)*MainRenderer.Cam.GetYFactor();
+
+            lastMouseX = currX;
+            lastMouseY = currY;
         });
         javaFxScene.setOnScroll(keyEvent -> {
             System.out.println(keyEvent.getDeltaY());
             if(keyEvent.getDeltaY() > 0) {
-               MainRenderer.ResizeObjects(1.1);
-               MainRenderer.ResizeScreenCoords(1.1);
+               MainRenderer.Cam.RealHeight = MainRenderer.Cam.RealHeight*0.95;
+               MainRenderer.Cam.RealWidth = MainRenderer.Cam.RealWidth*0.95;
            } else {
-              MainRenderer.ResizeObjects(0.9);
-              MainRenderer.ResizeScreenCoords(0.9);
+              MainRenderer.Cam.RealHeight = MainRenderer.Cam.RealHeight*1.05;
+              MainRenderer.Cam.RealWidth = MainRenderer.Cam.RealWidth*1.05;
             }
         });
         javaFxScene.setOnKeyPressed(keyEvent -> {
