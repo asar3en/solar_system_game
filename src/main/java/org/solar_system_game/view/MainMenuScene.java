@@ -62,33 +62,31 @@ public class MainMenuScene implements ViewScene {
         mainMenu.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(mainMenu.widthProperty()).divide(2));
         mainMenu.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(mainMenu.heightProperty()).divide(2));
 
-        Button newGameButton = new Button("Nowa gra");
-        Button loadGameButton = new Button("Wczytaj gre");
-        Button settingsButton = new Button("Opcje");
-        Button exitGameButton = new Button("Wyjście z gry");
+        Button newGameButton = new Button(manager.menuElements.getString("newGame"));
+        Button settingsButton = new Button(manager.menuElements.getString("settings"));
+        Button exitGameButton = new Button(manager.menuElements.getString("exit"));
 
-
-        loadGameButton.setOnAction(event -> {
-            if(!manager.SwitchScene("LoadGame", null)) {
-                LoadGameScene loadGameScene = new LoadGameScene(manager);
-                manager.SwitchScene("LoadGame", loadGameScene.GetJavafxScene());
+        newGameButton.setOnAction(e-> {
+            if(!manager.SwitchScene("MGS", null)) {
+                var mgS = new MainGameScene(manager);
+                manager.SwitchScene("MGS", mgS);
             }
         });
+
         settingsButton.setOnAction(event -> {
             if(!manager.SwitchScene("Settings", null)) {
                 SettingsScene optionsScreen = new SettingsScene(manager);
-                manager.SwitchScene("Settings", optionsScreen.GetJavafxScene());
+                manager.SwitchScene("Settings", optionsScreen);
             }
         });
         exitGameButton.setOnAction(event -> {Platform.exit();});
 
         //will just make buttons as wide as vbox
         newGameButton.setMaxWidth(Double.MAX_VALUE);
-        loadGameButton.setMaxWidth(Double.MAX_VALUE);
         settingsButton.setMaxWidth(Double.MAX_VALUE);
         exitGameButton.setMaxWidth(Double.MAX_VALUE);
 
-        mainMenu.getChildren().addAll(newGameButton, loadGameButton, settingsButton, exitGameButton);
+        mainMenu.getChildren().addAll(newGameButton, settingsButton, exitGameButton);
         root.getChildren().add(mainMenu);
     }
 
@@ -103,12 +101,6 @@ public class MainMenuScene implements ViewScene {
                     case KeyCode.F11:
                         manager.mainStage.setFullScreen(true);
                         break;
-                    case KeyCode.F10:
-                        if(!manager.SwitchScene("MGS", null)) {
-                            var mgS = new MainGameScene(manager);
-                            manager.SwitchScene("MGS", mgS.GetJavafxScene());
-                        }
-                        break;
                     default: break;
                 }
             }
@@ -117,5 +109,14 @@ public class MainMenuScene implements ViewScene {
 
     public Scene GetJavafxScene() {
         return javaFxScene;
+    }
+
+    @Override
+    public void UpdateToCurrLocale() {
+        Group root = new Group();
+        setBackground(root);
+        setUpTitle(root);
+        setUpButtons(root);
+        javaFxScene.setRoot(root);
     }
 }

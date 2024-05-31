@@ -14,6 +14,6 @@ public class Main extends  Application {
     public void start(Stage mainStage) {
         var manager = new ViewManager(mainStage);
         var mainMenu = new MainMenuScene(manager);
-        manager.SwitchScene("MainMenu", mainMenu.GetJavafxScene());
+        manager.SwitchScene("MainMenu", mainMenu);
     }
 }

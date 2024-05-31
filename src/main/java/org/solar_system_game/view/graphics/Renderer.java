@@ -3,6 +3,7 @@ package org.solar_system_game.view.graphics;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
+import org.solar_system_game.view.ViewManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,10 +16,12 @@ public class Renderer {
     public Map<String, Label> objectLabels = new HashMap<>();
     public Pane renderPane;
     public  SpaceShip spaceShip;
-    public Renderer(Pane renderPane, Camera camera, SpaceShip ss) {
+    ViewManager manager;
+    public Renderer(Pane renderPane, Camera camera, SpaceShip ss, ViewManager m) {
         this.renderPane = renderPane;
         this.Cam = camera;
         this.spaceShip = ss;
+        manager = m;
     }
 
     public void GenerateLabelNodes() {
@@ -66,6 +69,7 @@ public class Renderer {
             }
             if(objectLabels.containsKey(a.Label)) {
                 Label l = objectLabels.get(a.Label);
+                l.setText(manager.menuElements.getString(a.Label));
                 l.setLayoutX(a.PositionX);
                 l.setLayoutY(a.PositionY + a.Radius);
             }
@@ -106,12 +110,6 @@ public class Renderer {
                             (entry.getValue().getKey() - Cam.TopLeftRealXCord) / Cam.GetXFactor(),
                             (entry.getValue().getValue() - Cam.TopLeftRealYCord)/ Cam.GetYFactor()
                     )
-            );
-            System.out.println("Object: " + entry.getKey()
-                + " Real X: " + entry.getValue().getKey() + " Recalced X: " + (entry.getValue().getKey() - Cam.TopLeftRealXCord) / Cam.GetXFactor()
-            );
-            System.out.println("Object: " + entry.getKey()
-                    + " Real Y: " + entry.getValue().getValue() + " Recalced Y: " + (entry.getValue().getValue() - Cam.TopLeftRealYCord)/ Cam.GetYFactor()
             );
         }
         return  pixelCords;

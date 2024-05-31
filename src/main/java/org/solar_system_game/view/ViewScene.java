@@ -4,4 +4,5 @@ import javafx.scene.Scene;
 
 public interface ViewScene {
     Scene GetJavafxScene();
+    void UpdateToCurrLocale();
 }

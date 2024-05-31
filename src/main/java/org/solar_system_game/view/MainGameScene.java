@@ -27,19 +27,29 @@ public class MainGameScene implements ViewScene{
     int frameCount = 0;
     Boolean isShipAccelerating = false;
     Scenario currentScenario;
+    Group root;
+
+    MenuBar menuBar;
+    Camera cam;
+    SpaceShip ss;
 
     @Override
     public Scene GetJavafxScene() {
         return javaFxScene;
     }
 
+    @Override
+    public void UpdateToCurrLocale() {
+        root.getChildren().remove(menuBar);
+        this.setUpButtons(root);
+    }
+
     public MainGameScene(ViewManager manager) {
         this.manager = manager;
-        Group root = new Group();
+        root = new Group();
         javaFxScene = new Scene(root, manager.mainStage.getWidth(), manager.mainStage.getHeight(), Color.BLACK);
         setUpGameRendering(root);
         setUpButtons(root);
-        setUpGameInfo(root);
         setKeyShortcuts();
     }
 
@@ -54,12 +64,13 @@ public class MainGameScene implements ViewScene{
 
         currentScenario = new Scenario();
 
-        Camera cam = new Camera(0,0, 160_000_000, 90_000_000, javaFxScene.getWidth(), javaFxScene.getHeight());
-        SpaceShip ss = new SpaceShip(currentScenario.GetSimSpaceship().bodyCoordinates[0]/cam.GetXFactor(), currentScenario.GetSimSpaceship().bodyCoordinates[1]/cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreespaceship.png"));
-        MainRenderer = new Renderer(renderPane, cam, ss);
-
-        currentScenario.AddRenderObjectsToRenderer(MainRenderer);
-        MainRenderer.GenerateLabelNodes();
+        if(cam == null && cam == null && MainRenderer == null) {
+            cam = new Camera(0, 0, 160_000_000, 90_000_000, javaFxScene.getWidth(), javaFxScene.getHeight());
+            ss = new SpaceShip(currentScenario.GetSimSpaceship().bodyCoordinates[0] / cam.GetXFactor(), currentScenario.GetSimSpaceship().bodyCoordinates[1] / cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreespaceship.png"));
+            MainRenderer = new Renderer(renderPane, cam, ss, manager);
+            currentScenario.AddRenderObjectsToRenderer(MainRenderer);
+            MainRenderer.GenerateLabelNodes();
+        }
 
         timer = new AnimationTimer() {
             @Override
@@ -96,17 +107,21 @@ public class MainGameScene implements ViewScene{
     }
 
     private void setUpButtons(Group root) {
-        MenuBar bar = new MenuBar();
+        menuBar = new MenuBar();
         Menu mainMenu = new Menu("Menu");
-        MenuItem returnToMainMenu = new MenuItem("Powrót do Menu Głównego");
-        MenuItem newGame = new MenuItem("Nowa gra");
-        MenuItem loadGame = new MenuItem("Wczytaj gre");
-        MenuItem saveGame = new MenuItem("Zapisz gre");
-        MenuItem settings = new MenuItem("Opcje");
-        MenuItem exitGame = new MenuItem("Wyjście z gry");
+        MenuItem returnToMainMenu = new MenuItem(manager.menuElements.getString("returnToMenu"));
+        MenuItem newGame = new MenuItem(manager.menuElements.getString("newGameRaw"));
+        MenuItem settings = new MenuItem(manager.menuElements.getString("settings"));
+        MenuItem exitGame = new MenuItem(manager.menuElements.getString("exit"));
+
+        newGame.setOnAction(e -> {
+            timer.stop();
+             var mgS = new MainGameScene(manager);
+             manager.SwitchScene("MGS", mgS);
+
+        });
 
         returnToMainMenu.setOnAction(actionEvent -> {
-            timer.stop();
             isPaused = true;
             manager.SwitchScene("MainMenu", null);
         });
@@ -114,56 +129,32 @@ public class MainGameScene implements ViewScene{
         settings.setOnAction(actionEvent -> {
             if(!manager.SwitchScene("Settings", null)) {
                 SettingsScene settingsScene = new SettingsScene(manager);
-                manager.SwitchScene("Settings", settingsScene.GetJavafxScene());
+                manager.SwitchScene("Settings", settingsScene);
             }
         });
 
-        loadGame.setOnAction(actionEvent -> {
-            if(!manager.SwitchScene("LoadGame", null)) {
-                LoadGameScene loadGameScene = new LoadGameScene(manager);
-                manager.SwitchScene("LoadGame", loadGameScene.GetJavafxScene());
-            }
-        });
 
         exitGame.setOnAction(actionEvent -> Platform.exit());
 
-        mainMenu.getItems().addAll(returnToMainMenu,newGame,loadGame,saveGame,settings,exitGame);
-        bar.getMenus().add(mainMenu);
+        mainMenu.getItems().addAll(returnToMainMenu,newGame,settings,exitGame);
+        menuBar.getMenus().add(mainMenu);
 
-        bar.setTranslateX(0);
-        bar.setTranslateY(0);
+        menuBar.setTranslateX(0);
+        menuBar.setTranslateY(0);
 
         Button startPause = new Button("S/P");
         startPause.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(startPause.widthProperty()).subtract(50));
         startPause.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(startPause.heightProperty()).subtract(50));
-        startPause.setOnAction((e) -> isPaused = !isPaused);
+        startPause.setOnAction((e) -> {
+            if(isPaused) {
+                isPaused = false;
+            }
+            else {
+                isPaused = true;
+            }
+        });
 
-        root.getChildren().addAll(bar, startPause);
-    }
-
-    private void setUpGameInfo(Group root) {
-        Label target = new Label("Cel: Tu Jest Cel");
-        target.setFont(Font.font("Arial", 20));
-        target.setTextFill(Color.WHITE);
-        target.prefWidthProperty().bind(manager.mainStage.widthProperty().divide(6));
-        target.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(target.widthProperty().add(15)));
-
-
-        Label time = new Label("Czas: \n Tu się wyświetla czas");
-        time.prefWidthProperty().bind(target.prefWidthProperty());
-        time.setFont(Font.font("Arial", 20));
-        time.setTextFill(Color.WHITE);
-        time.layoutXProperty().bind(target.layoutXProperty());
-        time.layoutYProperty().bind(target.layoutYProperty().add(target.heightProperty().add(10)));
-
-        Label fuel = new Label("Stan Paliwa: coś / max");
-        fuel.prefWidthProperty().bind(target.prefWidthProperty());
-        fuel.setFont(Font.font("Arial", 20));
-        fuel.layoutXProperty().bind(target.layoutXProperty());
-        fuel.setTextFill(Color.WHITE);
-        fuel.layoutYProperty().bind(time.layoutYProperty().add(time.heightProperty().add(10)));
-
-        root.getChildren().addAll(target,time,fuel);
+        root.getChildren().addAll(menuBar, startPause);
     }
 
     private void setKeyShortcuts() {
@@ -195,7 +186,6 @@ public class MainGameScene implements ViewScene{
             lastMouseY = currY;
         });
         javaFxScene.setOnScroll(keyEvent -> {
-            System.out.println(keyEvent.getDeltaY());
             if(keyEvent.getDeltaY() > 0) {
                MainRenderer.Cam.RealHeight = MainRenderer.Cam.RealHeight*0.95;
                MainRenderer.Cam.RealWidth = MainRenderer.Cam.RealWidth*0.95;
@@ -212,11 +202,9 @@ public class MainGameScene implements ViewScene{
                     break;
                 case KeyCode.A:
                     MainRenderer.spaceShip.Rotation+=0.0174533*5; //adds around 5 degrees
-                    System.out.println("Ship rotation: " + MainRenderer.spaceShip.Rotation);
                     break;
                 case KeyCode.D:
                     MainRenderer.spaceShip.Rotation-=0.0174533*5; //adds around 5 degrees
-                    System.out.println("Ship rotation: " + MainRenderer.spaceShip.Rotation);
                     break;
                 case KeyCode.S:
                     break;
@@ -226,12 +214,6 @@ public class MainGameScene implements ViewScene{
                 case KeyCode.F11:
                     manager.mainStage.setFullScreen(true);
                     break;
-                case KeyCode.F9:
-                    var MissCreSce = new MissionCreatorScene(manager);
-                    manager.SwitchScene("MissCreSce", MissCreSce.GetJavafxScene());
-                case KeyCode.F8:
-                    var PlanetAddScene = new PlanetAdditionScene(manager);
-                    manager.SwitchScene("PlanetAddScene", PlanetAddScene.GetJavafxScene());
                 case KeyCode.ESCAPE:
                     // pause the game
                 default: break;
