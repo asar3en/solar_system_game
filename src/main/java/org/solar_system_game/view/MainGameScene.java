@@ -11,14 +11,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Pair;
-import org.solar_system_game.Main;
 import org.solar_system_game.sim.CelestialBody;
-import org.solar_system_game.sim.SolarSystemParameters;
-import org.solar_system_game.sim.Spaceship;
-import org.solar_system_game.view.graphics.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.solar_system_game.view.graphics.Camera;
+import org.solar_system_game.view.graphics.Renderer;
+import org.solar_system_game.view.graphics.SpaceShip;
 
 public class MainGameScene implements ViewScene{
     Scene javaFxScene;
@@ -30,6 +26,7 @@ public class MainGameScene implements ViewScene{
     private double lastMouseY;
     int frameCount = 0;
     Boolean isShipAccelerating = false;
+    Scenario currentScenario;
 
     @Override
     public Scene GetJavafxScene() {
@@ -50,172 +47,43 @@ public class MainGameScene implements ViewScene{
         Pane renderPane = new Pane();
         renderPane.setMinWidth(javaFxScene.getWidth());
         renderPane.setMinHeight(javaFxScene.getHeight());
-        final double[] count = {0};
         root.getChildren().add(renderPane);
 
         final long[] lastUpdateTime = {0};
         final double TARGET_UPDATE_INT = 1.0 / 60;
 
-        Spaceship simSS = new Spaceship(
-                110000,
-                1,
-                10
-        );
-
+        currentScenario = new Scenario();
 
         Camera cam = new Camera(0,0, 160_000_000, 90_000_000, javaFxScene.getWidth(), javaFxScene.getHeight());
-        SpaceShip ss = new SpaceShip(simSS.bodyCoordinates[0]/cam.GetXFactor(), simSS.bodyCoordinates[1]/cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreespaceship.png"));
+        SpaceShip ss = new SpaceShip(currentScenario.GetSimSpaceship().bodyCoordinates[0]/cam.GetXFactor(), currentScenario.GetSimSpaceship().bodyCoordinates[1]/cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreespaceship.png"));
         MainRenderer = new Renderer(renderPane, cam, ss);
 
-
-        // ---- STARTING SIM DATA
-
-        // ----- SET UP ALL OBJECTS POSITION AND RADII FOR CEL.
-
-        CelestialBody Sun = new CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[0],
-                SolarSystemParameters.celestialBodyMeanRadii[0],
-                0, 0, 0);
-
-        CelestialBody Mercury = new CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[1],
-                SolarSystemParameters.celestialBodyMeanRadii[1],
-                SolarSystemParameters.celestialBodyMeanDist[1],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[0], 1);
-        Mercury.initCoordinates();
-        CelestialBody Venus = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[2],
-                SolarSystemParameters.celestialBodyMeanRadii[2],
-                SolarSystemParameters.celestialBodyMeanDist[2],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[1], 2);
-        Venus.initCoordinates();
-        CelestialBody Earth = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[3],
-                SolarSystemParameters.celestialBodyMeanRadii[3],
-                SolarSystemParameters.celestialBodyMeanDist[3],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[2], 3);
-        Earth.initCoordinates();
-        CelestialBody Mars = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[4],
-                SolarSystemParameters.celestialBodyMeanRadii[4],
-                SolarSystemParameters.celestialBodyMeanDist[4],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[3], 4);
-        Mars.initCoordinates();
-        CelestialBody Jupiter = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[5],
-                SolarSystemParameters.celestialBodyMeanRadii[5],
-                SolarSystemParameters.celestialBodyMeanDist[5],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[4], 5);
-        Jupiter.initCoordinates();
-        CelestialBody Saturn = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[6],
-                SolarSystemParameters.celestialBodyMeanRadii[6],
-                SolarSystemParameters.celestialBodyMeanDist[6],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[5], 6);
-        Saturn.initCoordinates();
-        CelestialBody Uranus = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[7],
-                SolarSystemParameters.celestialBodyMeanRadii[7],
-                SolarSystemParameters.celestialBodyMeanDist[7],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[6], 7);
-        Uranus.initCoordinates();
-        CelestialBody Neptune = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[8],
-                SolarSystemParameters.celestialBodyMeanRadii[8],
-                SolarSystemParameters.celestialBodyMeanDist[8],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[7], 8);
-        Neptune.initCoordinates();
-        CelestialBody Pluto = new  CelestialBody(
-                SolarSystemParameters.celestialBodyMasses[9],
-                SolarSystemParameters.celestialBodyMeanRadii[9],
-                SolarSystemParameters.celestialBodyMeanDist[9],
-                SolarSystemParameters.celestialBodyMeanOrbitalVelocities[8], 2);
-        Pluto.initCoordinates();
-        CelestialBody[] celBodies = {
-                Sun, Mercury,Venus,Earth,Mars,Jupiter,Saturn,Uranus,Neptune,Pluto
-        };
-
-
-       Map<String, Pair<Double, Double>> realCelPositions = new HashMap<>();
-       realCelPositions.put("Sun", new Pair<>(0.0,0.0));
-       realCelPositions.put("Mercury", new Pair<>(Mercury.bodyCoordinates[0],Mercury.bodyCoordinates[1]));
-       realCelPositions.put("Venus", new Pair<>(Venus.bodyCoordinates[0],Venus.bodyCoordinates[1]));
-       realCelPositions.put("Earth", new Pair<>(Earth.bodyCoordinates[0],Earth.bodyCoordinates[1]));
-       realCelPositions.put("Mars", new Pair<>(Mars.bodyCoordinates[0],Mars.bodyCoordinates[1]));
-       realCelPositions.put("Jupiter", new Pair<>(Jupiter.bodyCoordinates[0],Jupiter.bodyCoordinates[1]));
-       realCelPositions.put("Saturn", new Pair<>(Saturn.bodyCoordinates[0],Saturn.bodyCoordinates[1]));
-       realCelPositions.put("Uranus", new Pair<>(Uranus.bodyCoordinates[0],Uranus.bodyCoordinates[1]));
-       realCelPositions.put("Neptune", new Pair<>(Neptune.bodyCoordinates[0],Neptune.bodyCoordinates[1]));
-       realCelPositions.put("Pluto", new Pair<>(Pluto.bodyCoordinates[0],Pluto.bodyCoordinates[1]));
-
-       realCelPositions.put("SpaceShip", new Pair<>(simSS.bodyCoordinates[0], simSS.bodyCoordinates[1]));
-
-       Map<String, Double> radii = new HashMap<>();
-       radii.put("Sun", SolarSystemParameters.celestialBodyMeanRadii[0]);
-       radii.put("Mercury", SolarSystemParameters.celestialBodyMeanRadii[1]);
-       radii.put("Venus", SolarSystemParameters.celestialBodyMeanRadii[2]);
-       radii.put("Earth", SolarSystemParameters.celestialBodyMeanRadii[3]);
-       radii.put("Mars", SolarSystemParameters.celestialBodyMeanRadii[4]);
-       radii.put("Jupiter", SolarSystemParameters.celestialBodyMeanRadii[5]);
-       radii.put("Saturn", SolarSystemParameters.celestialBodyMeanRadii[6]);
-       radii.put("Uranus", SolarSystemParameters.celestialBodyMeanRadii[7]);
-       radii.put("Neptune", SolarSystemParameters.celestialBodyMeanRadii[8]);
-       radii.put("Pluto", SolarSystemParameters.celestialBodyMeanRadii[9]);
-       radii.put("SpaceShip", ss.Width);
-
-        // --- CREATING RENDERING OBJECTS VERY IMPORTANT FOR THE NAMES IN RADII relCelPositions and RenderObjects to be the same!
-
-        MainRenderer.AddToRenderList(new RenderObject(Color.YELLOW, "Sun"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.ORANGE, "Mercury"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.CHOCOLATE, "Venus"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.GREEN, "Earth"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.ORANGE, "Mars"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.CRIMSON, "Jupiter"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.DIMGREY, "Saturn"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.BROWN, "Uranus"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.BLUE, "Neptune"));
-        MainRenderer.AddToRenderList(new RenderObject(Color.AZURE, "Pluto"));
-
+        currentScenario.AddRenderObjectsToRenderer(MainRenderer);
         MainRenderer.GenerateLabelNodes();
 
         timer = new AnimationTimer() {
-            final double EarthOrbit = 149_600_000;
             @Override
             public void handle(long l) {
                 double elapsedTime = (l - lastUpdateTime[0]) / 1_000_000_000.0;
                 if (elapsedTime >= TARGET_UPDATE_INT) {
                     //CALCULATE THEORETICAL POSITIONS
-                    if(!isPaused)
-                    for(int i =0; i <100; i++){
-                        Mercury.nextPosition(celBodies);
-                        Venus.nextPosition(celBodies);
-                        Earth.nextPosition(celBodies);
-                        Mars.nextPosition(celBodies);
-                        Jupiter.nextPosition(celBodies);
-                        Saturn.nextPosition(celBodies);
-                        Uranus.nextPosition(celBodies);
-                        Neptune.nextPosition(celBodies);
-                        Pluto.nextPosition(celBodies);
-                        simSS.nextPosition(celBodies, isShipAccelerating, ss.Rotation);
+                    if(!isPaused) {
+                        for (int i = 0; i < 100; i++) {
+                            for (CelestialBody body : currentScenario.getCelestialBodies())
+                                body.nextPosition(currentScenario.getCelestialBodies());
+                            currentScenario.GetSimSpaceship().nextPosition(currentScenario.getCelestialBodies(), isShipAccelerating, ss.Rotation);
+                        }
+                        for (CelestialBody body : currentScenario.getCelestialBodies()) {
+                            currentScenario.realCelPositions.put(body.Name, new Pair<>(body.bodyCoordinates[0], body.bodyCoordinates[1]));
+                        }
+                        currentScenario.realCelPositions.put("SpaceShip", new Pair<>(currentScenario.GetSimSpaceship().bodyCoordinates[0], currentScenario.GetSimSpaceship().bodyCoordinates[1]));
                     }
-
-                    realCelPositions.put("Mercury", new Pair<>(Mercury.bodyCoordinates[0],Mercury.bodyCoordinates[1]));
-                    realCelPositions.put("Venus", new Pair<>(Venus.bodyCoordinates[0],Venus.bodyCoordinates[1]));
-                    realCelPositions.put("Earth", new Pair<>(Earth.bodyCoordinates[0],Earth.bodyCoordinates[1]));
-                    realCelPositions.put("Mars", new Pair<>(Mars.bodyCoordinates[0],Mars.bodyCoordinates[1]));
-                    realCelPositions.put("Jupiter", new Pair<>(Jupiter.bodyCoordinates[0],Jupiter.bodyCoordinates[1]));
-                    realCelPositions.put("Saturn", new Pair<>(Saturn.bodyCoordinates[0],Saturn.bodyCoordinates[1]));
-                    realCelPositions.put("Uranus", new Pair<>(Uranus.bodyCoordinates[0],Uranus.bodyCoordinates[1]));
-                    realCelPositions.put("Neptune", new Pair<>(Neptune.bodyCoordinates[0],Neptune.bodyCoordinates[1]));
-                    realCelPositions.put("Pluto", new Pair<>(Pluto.bodyCoordinates[0],Pluto.bodyCoordinates[1]));
-                    realCelPositions.put("SpaceShip", new Pair<>(simSS.bodyCoordinates[0], simSS.bodyCoordinates[1]));
-
                     //CALCULATE REAL POSITION IN RELATION TO CAMERA
-                    var scaledPos = MainRenderer.ChangeRealPosToPixelRel(realCelPositions);
+                    var scaledPos = MainRenderer.ChangeRealPosToPixelRel(currentScenario.realCelPositions);
 
                     //UPDATE THE POSITIONS AND RADII
                     MainRenderer.UpdatePositions(scaledPos);
-                    MainRenderer.UpdateRadiiFromReal(radii);
+                    MainRenderer.UpdateRadiiFromReal(currentScenario.GetRadii());
 
                     //CLEAR AND RENDER
                     MainRenderer.Redraw();
@@ -268,14 +136,7 @@ public class MainGameScene implements ViewScene{
         Button startPause = new Button("S/P");
         startPause.layoutXProperty().bind(manager.mainStage.widthProperty().subtract(startPause.widthProperty()).subtract(50));
         startPause.layoutYProperty().bind(manager.mainStage.heightProperty().subtract(startPause.heightProperty()).subtract(50));
-        startPause.setOnAction((e) -> {
-            if(isPaused) {
-                isPaused = false;
-            }
-            else {
-                isPaused = true;
-            }
-        });
+        startPause.setOnAction((e) -> isPaused = !isPaused);
 
         root.getChildren().addAll(bar, startPause);
     }

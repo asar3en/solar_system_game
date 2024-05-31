@@ -4,16 +4,17 @@ import java.util.Random;
 
 public class CelestialBody {
     double mass;
-    double radius;
+    public double radius;
     double distFromOrbitedBody;
     public double meanInitVelocity;
     int bodyID;
     public double[] bodyCoordinates;
     public  double[] bodyVelocity;
     double[] bodyAcceleration;
+    public String Name;
 
-
-    public CelestialBody(double m, double r, double d, double v,int i) {
+    public CelestialBody(double m, double r, double d, double v,int i, String name) {
+        this.Name = name;
         mass = m;
         radius = r;
         bodyID = i;
@@ -39,16 +40,15 @@ public class CelestialBody {
         this.bodyAcceleration[0] = 0.0;
         this.bodyAcceleration[1] = 0.0;
 
-        for (int i = 0; i < bodiesSet.length; i++) {
+        for (CelestialBody celestialBody : bodiesSet) {
+            if (this.bodyID != celestialBody.bodyID) {
+                double r_x = this.bodyCoordinates[0] - celestialBody.bodyCoordinates[0];
+                double r_y = this.bodyCoordinates[1] - celestialBody.bodyCoordinates[1];
 
-            if (this.bodyID != bodiesSet[i].bodyID) {
-                double r_x = this.bodyCoordinates[0] - bodiesSet[i].bodyCoordinates[0];
-                double r_y = this.bodyCoordinates[1] - bodiesSet[i].bodyCoordinates[1];
-
-                double r_length = (double) Math.sqrt(r_x*r_x + r_y*r_y);
-                double a_total = (double) ((-1.0 * SolarSystemParameters.G * bodiesSet[i].mass)/(r_length*r_length));
-                r_x = r_x/r_length;
-                r_y = r_y/r_length;
+                double r_length = Math.sqrt(r_x * r_x + r_y * r_y);
+                double a_total = (-1.0 * SolarSystemParameters.G * celestialBody.mass) / (r_length * r_length);
+                r_x = r_x / r_length;
+                r_y = r_y / r_length;
                 this.bodyAcceleration[0] += r_x * a_total;
                 this.bodyAcceleration[1] += r_y * a_total;
             }
