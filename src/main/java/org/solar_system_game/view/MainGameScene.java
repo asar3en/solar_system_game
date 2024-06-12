@@ -12,9 +12,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Pair;
 import org.solar_system_game.sim.CelestialBody;
+import org.solar_system_game.sim.SolarSystemParameters;
 import org.solar_system_game.view.graphics.Camera;
 import org.solar_system_game.view.graphics.Renderer;
 import org.solar_system_game.view.graphics.SpaceShip;
+
+import java.util.concurrent.TimeUnit;
 
 public class MainGameScene implements ViewScene{
     Scene javaFxScene;
@@ -26,6 +29,7 @@ public class MainGameScene implements ViewScene{
     private double lastMouseY;
     int frameCount = 0;
     Boolean isShipAccelerating = false;
+    double ThrustDirection;
     Scenario currentScenario;
     Group root;
 
@@ -198,7 +202,10 @@ public class MainGameScene implements ViewScene{
             switch (keyEvent.getCode()) {
                 case KeyCode.W:
                     //move the ship, add acceleration, etc.
-                    isShipAccelerating = true;
+                    if (currentScenario.GetSimSpaceship().fuel >= 0){
+                        ThrustDirection = 1;
+                        currentScenario.GetSimSpaceship().impulsiveManeuver(ss.Rotation, ThrustDirection);
+                    }
                     break;
                 case KeyCode.A:
                     MainRenderer.spaceShip.Rotation+=0.0174533*5; //adds around 5 degrees
@@ -207,6 +214,15 @@ public class MainGameScene implements ViewScene{
                     MainRenderer.spaceShip.Rotation-=0.0174533*5; //adds around 5 degrees
                     break;
                 case KeyCode.S:
+                    if (currentScenario.GetSimSpaceship().fuel >= 0){
+                        ThrustDirection = -1;
+                        currentScenario.GetSimSpaceship().impulsiveManeuver(ss.Rotation, ThrustDirection);
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                     break;
                 case KeyCode.F12:
                     manager.mainStage.setFullScreen(false);

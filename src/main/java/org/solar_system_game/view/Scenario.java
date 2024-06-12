@@ -23,7 +23,7 @@ public class Scenario {
     public Scenario(CelestialBody[] celestialBodies) {
         spaceshipForSim = new Spaceship(
                 110000,
-                1,
+                24000,
                 10
         );
 
@@ -42,7 +42,7 @@ public class Scenario {
     public Scenario() {
         spaceshipForSim = new Spaceship(
                 110000,
-                1,
+                24000,
                 10
         );
 
