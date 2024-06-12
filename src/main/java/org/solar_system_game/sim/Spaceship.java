@@ -37,6 +37,10 @@ public class Spaceship {
 
     public void nextPosition(CelestialBody[] bodiesSet, Boolean isAcc, double angle){
         int timestep = 100; //temp value, needs changing to properly scaled time step
+        double[] prevStepAccel = new double[2];
+        prevStepAccel[0] = this.bodyAcceleration[0];
+        prevStepAccel[1] = this.bodyAcceleration[1];
+
         if(isAcc) {
             this.bodyAcceleration[0] = -0.00001*Math.sin(angle); //arbitrary number to not make acc too fast
             this.bodyAcceleration[1] = -0.00001*Math.cos(angle); //sin for x, cos for y because angle is calculated from y axis not x
@@ -61,12 +65,12 @@ public class Spaceship {
         this.bodyAcceleration[0] += this.spaceshipGeneratedAccel[0];
         this.bodyAcceleration[1] += this.spaceshipGeneratedAccel[1];
 
-        this.bodyVelocity[0] += this.bodyAcceleration[0] * timestep;
-        this.bodyVelocity[1] += this.bodyAcceleration[1] * timestep;
+        this.bodyCoordinates[0] += (this.bodyVelocity[0] * timestep + 0.5 * prevStepAccel[0] * Math.pow(timestep, 2));
+        this.bodyCoordinates[1] += (this.bodyVelocity[1] * timestep + 0.5 * prevStepAccel[1] * Math.pow(timestep, 2));
 
-        this.bodyCoordinates[0] += this.bodyVelocity[0] * timestep;
-        this.bodyCoordinates[1] += this.bodyVelocity[1] * timestep;
-        //currently using basic Euler integration, liable to be changed later to a diff method
+        this.bodyVelocity[0] += 0.5 * (this.bodyAcceleration[0] + prevStepAccel[0]) * timestep;
+        this.bodyVelocity[1] += 0.5 * (this.bodyAcceleration[1] + prevStepAccel[1]) * timestep;
+
     }
 }
 

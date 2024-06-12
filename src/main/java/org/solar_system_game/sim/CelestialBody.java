@@ -37,6 +37,10 @@ public class CelestialBody {
 
     public void nextPosition(CelestialBody[] bodiesSet){
         double timestep = 100; //temp value, needs changing to properly scaled time step
+
+        double[] prevStepAccel = new double[2];
+        prevStepAccel[0] = this.bodyAcceleration[0];
+        prevStepAccel[1] = this.bodyAcceleration[1];
         this.bodyAcceleration[0] = 0.0;
         this.bodyAcceleration[1] = 0.0;
 
@@ -53,11 +57,10 @@ public class CelestialBody {
                 this.bodyAcceleration[1] += r_y * a_total;
             }
         }
-        this.bodyVelocity[0] += this.bodyAcceleration[0] * timestep;
-        this.bodyVelocity[1] += this.bodyAcceleration[1] * timestep;
+        this.bodyCoordinates[0] += (this.bodyVelocity[0] * timestep + 0.5 * prevStepAccel[0] * Math.pow(timestep, 2));
+        this.bodyCoordinates[1] += (this.bodyVelocity[1] * timestep + 0.5 * prevStepAccel[1] * Math.pow(timestep, 2));
 
-        this.bodyCoordinates[0] += this.bodyVelocity[0] * timestep;
-        this.bodyCoordinates[1] += this.bodyVelocity[1] * timestep;
-        //currently using basic Euler integration, liable to be changed later to a diff method
+        this.bodyVelocity[0] += 0.5 * (this.bodyAcceleration[0] + prevStepAccel[0]) * timestep;
+        this.bodyVelocity[1] += 0.5 * (this.bodyAcceleration[1] + prevStepAccel[1]) * timestep;
     }
 }
