@@ -1,5 +1,4 @@
 package org.solar_system_game.sim;
-
 /***
  Some figures, to use later during initialisation:
  length/height/wingspan: 38/18/24 m
@@ -18,7 +17,7 @@ package org.solar_system_game.sim;
 
 public class Spaceship {
     double mass;
-    double fuel;
+    public double fuel;
     int bodyID;
     public double[] bodyCoordinates = new double[2];
     double[] bodyVelocity = new double[2];;
@@ -26,9 +25,8 @@ public class Spaceship {
     double[] spaceshipGeneratedAccel = new double[2];;
 
     public Spaceship(double m, double f, int i) {
-        fuel = f; //initial value maybe limited for a challenge? Also in litres. Likely ~100
-        mass = (double) (m + 1.1*f); //in kg, 1.1 being the density of fuel used
-        //this form should make it easier to add how fuel will reduce over time
+        fuel = f;
+        mass = m;
         bodyID = i;
         bodyCoordinates[0] = 0;
         bodyCoordinates[1] = 778.5*Math.pow(10, 6);
@@ -36,14 +34,14 @@ public class Spaceship {
     }
 
     public void nextPosition(CelestialBody[] bodiesSet, Boolean isAcc, double angle){
-        int timestep = 100; //temp value, needs changing to properly scaled time step
-        if(isAcc) {
-            this.bodyAcceleration[0] = -0.00001*Math.sin(angle); //arbitrary number to not make acc too fast
-            this.bodyAcceleration[1] = -0.00001*Math.cos(angle); //sin for x, cos for y because angle is calculated from y axis not x
-        } else {
-            this.bodyAcceleration[0] = 0.0;
-            this.bodyAcceleration[1] = 0.0;
-        }
+        int timestep = 1000;
+        double[] prevStepAccel = new double[2];
+        prevStepAccel[0] = this.bodyAcceleration[0];
+        prevStepAccel[1] = this.bodyAcceleration[1];
+
+        this.bodyAcceleration[0] = 0.0;
+        this.bodyAcceleration[1] = 0.0;
+
         for (int i = 0; i < bodiesSet.length; i++) {
 
             if (this.bodyID != bodiesSet[i].bodyID) {
@@ -61,12 +59,25 @@ public class Spaceship {
         this.bodyAcceleration[0] += this.spaceshipGeneratedAccel[0];
         this.bodyAcceleration[1] += this.spaceshipGeneratedAccel[1];
 
-        this.bodyVelocity[0] += this.bodyAcceleration[0] * timestep;
-        this.bodyVelocity[1] += this.bodyAcceleration[1] * timestep;
+        this.bodyCoordinates[0] += (this.bodyVelocity[0] * timestep + 0.5 * prevStepAccel[0] * Math.pow(timestep, 2));
+        this.bodyCoordinates[1] += (this.bodyVelocity[1] * timestep + 0.5 * prevStepAccel[1] * Math.pow(timestep, 2));
 
-        this.bodyCoordinates[0] += this.bodyVelocity[0] * timestep;
-        this.bodyCoordinates[1] += this.bodyVelocity[1] * timestep;
-        //currently using basic Euler integration, liable to be changed later to a diff method
+        this.bodyVelocity[0] += 0.5 * (this.bodyAcceleration[0] + prevStepAccel[0]) * timestep;
+        this.bodyVelocity[1] += 0.5 * (this.bodyAcceleration[1] + prevStepAccel[1]) * timestep;
+
+    }
+
+    public void impulsiveManeuver(double angle, double ThrustDir){
+        double[] RocketThrustAcc = new double [2];
+        RocketThrustAcc[0] = -SolarSystemParameters.RocketThrustForce/mass*Math.sin(angle);
+        RocketThrustAcc[1] = -SolarSystemParameters.RocketThrustForce/mass*Math.cos(angle)*ThrustDir;
+        this.bodyVelocity[0] += RocketThrustAcc[0] * 0.5;
+        this.bodyVelocity[1] += RocketThrustAcc[1] * 0.5;
+        //"timestep" of roughly three seconds
+        //but in the scale of the simulation it is instant
+        //therefore no position change occurs, only the velocity is adjusted.
+        this.mass-= 300;
+        this.fuel-= 300;
     }
 }
 
