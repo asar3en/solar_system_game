@@ -25,9 +25,8 @@ public class Spaceship {
     double[] spaceshipGeneratedAccel = new double[2];;
 
     public Spaceship(double m, double f, int i) {
-        fuel = f; //initial value maybe limited for a challenge? Also in litres. Likely ~100
-        mass = (double) (m + 1.1*f); //in kg, 1.1 being the density of fuel used
-        //this form should make it easier to add how fuel will reduce over time
+        fuel = f;
+        mass = m;
         bodyID = i;
         bodyCoordinates[0] = 0;
         bodyCoordinates[1] = 778.5*Math.pow(10, 6);
@@ -35,7 +34,7 @@ public class Spaceship {
     }
 
     public void nextPosition(CelestialBody[] bodiesSet, Boolean isAcc, double angle){
-        int timestep = 1000; //temp value, needs changing to properly scaled time step
+        int timestep = 1000;
         double[] prevStepAccel = new double[2];
         prevStepAccel[0] = this.bodyAcceleration[0];
         prevStepAccel[1] = this.bodyAcceleration[1];
@@ -72,13 +71,13 @@ public class Spaceship {
         double[] RocketThrustAcc = new double [2];
         RocketThrustAcc[0] = -SolarSystemParameters.RocketThrustForce/mass*Math.sin(angle);
         RocketThrustAcc[1] = -SolarSystemParameters.RocketThrustForce/mass*Math.cos(angle)*ThrustDir;
-        this.bodyVelocity[0] += RocketThrustAcc[0] * 1.5;
-        this.bodyVelocity[1] += RocketThrustAcc[1] * 1.5;
+        this.bodyVelocity[0] += RocketThrustAcc[0] * 0.5;
+        this.bodyVelocity[1] += RocketThrustAcc[1] * 0.5;
         //"timestep" of roughly three seconds
         //but in the scale of the simulation it is instant
         //therefore no position change occurs, only the velocity is adjusted.
-        this.mass-= 600;
-        this.fuel-= 600;
+        this.mass-= 300;
+        this.fuel-= 300;
     }
 }
 
