@@ -42,6 +42,8 @@ public class SettingsScene implements ViewScene{
         VBox cbHolder = new VBox(10);
         CheckBox englishLang = new CheckBox(manager.menuElements.getString("englishLang"));
         CheckBox polishLang = new CheckBox(manager.menuElements.getString("polishLang"));
+        englishLang.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+        polishLang.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
 
         if(manager.currentLocale.getLanguage().equals("en"))
             englishLang.setSelected(true);

@@ -9,7 +9,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.util.Pair;
 import org.solar_system_game.sim.CelestialBody;
 import org.solar_system_game.sim.SolarSystemParameters;
@@ -68,7 +67,7 @@ public class MainGameScene implements ViewScene{
 
         currentScenario = new Scenario();
 
-        if(cam == null && cam == null && MainRenderer == null) {
+        if(cam == null  && MainRenderer == null) {
             cam = new Camera(0, 0, 160_000_000, 90_000_000, javaFxScene.getWidth(), javaFxScene.getHeight());
             ss = new SpaceShip(currentScenario.GetSimSpaceship().bodyCoordinates[0] / cam.GetXFactor(), currentScenario.GetSimSpaceship().bodyCoordinates[1] / cam.GetYFactor(), 0.0, 10, 5, new Image("copyrightfreespaceship.png"));
             MainRenderer = new Renderer(renderPane, cam, ss, manager);
@@ -84,11 +83,11 @@ public class MainGameScene implements ViewScene{
                     //CALCULATE THEORETICAL POSITIONS
                     if(!isPaused) {
                         for (int i = 0; i < 100; i++) {
-                            for (CelestialBody body : currentScenario.getCelestialBodies())
-                                body.nextPosition(currentScenario.getCelestialBodies());
-                            currentScenario.GetSimSpaceship().nextPosition(currentScenario.getCelestialBodies(), isShipAccelerating, ss.Rotation);
+                            for (CelestialBody body : currentScenario.GetCelestialBodies())
+                                body.nextPosition(currentScenario.GetCelestialBodies());
+                            currentScenario.GetSimSpaceship().nextPosition(currentScenario.GetCelestialBodies(), isShipAccelerating, ss.Rotation);
                         }
-                        for (CelestialBody body : currentScenario.getCelestialBodies()) {
+                        for (CelestialBody body : currentScenario.GetCelestialBodies()) {
                             currentScenario.realCelPositions.put(body.Name, new Pair<>(body.bodyCoordinates[0], body.bodyCoordinates[1]));
                         }
                         currentScenario.realCelPositions.put("SpaceShip", new Pair<>(currentScenario.GetSimSpaceship().bodyCoordinates[0], currentScenario.GetSimSpaceship().bodyCoordinates[1]));

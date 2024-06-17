@@ -31,15 +31,15 @@ public class SpaceShip {
     }
 
     public void ChangeSize(double newWidth, double newHeight) {
-        if(newWidth > 100)
+        if(newWidth > 30)
             Width = newWidth;
         else
-            Width = 100;
-        if(newHeight > 50)
+            Width = 30;
+        if(newHeight > 70)
             Height = newHeight;
         else
-            Height = 25;
-        imageView.setFitHeight(Width);
-        imageView.setFitWidth(Height);
+            Height = 70;
+        imageView.setFitWidth(Width);
+        imageView.setFitHeight(Height);
     }
 }

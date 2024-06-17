@@ -113,6 +113,7 @@ public class Scenario {
             realCelPositions.put(body.Name, new Pair<>(body.bodyCoordinates[0], body.bodyCoordinates[1]));
             radii.put(body.Name, body.radius);
         }
+        radii.put("SpaceShip", 0.06);
 
         realCelPositions.put("SpaceShip", new Pair<>(spaceshipForSim.bodyCoordinates[0], spaceshipForSim.bodyCoordinates[1]));
     }
@@ -123,11 +124,9 @@ public class Scenario {
     public Map<String, Double> GetRadii() {
         return radii;
     }
-    public CelestialBody[] getCelestialBodies() {
+    public CelestialBody[] GetCelestialBodies() {
         return celestialBodies;
     }
-
-
 
     public void AddRenderObjectsToRenderer(Renderer renderer) {
         Random random = new Random();

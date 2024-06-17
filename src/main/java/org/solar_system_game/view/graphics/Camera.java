@@ -5,7 +5,6 @@ public class Camera {
     public double TopLeftRealYCord;
     public double RealWidth;
     public double RealHeight;
-
     public double PixelWidth;
     public double PixelHeight;
 
